@@ -16,6 +16,7 @@ use Composer\IO\IOInterface;
 use Composer\Plugin\PluginInterface;
 use Composer\Script\PackageEvent;
 use Composer\Script\ScriptEvents;
+use Composer\Util\Filesystem;
 
 /**
  * Class Plugin.
@@ -33,6 +34,11 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
   protected $composer;
 
   /**
+   * @var \Composer\Util\Filesystem
+   */
+  protected $filesystem;
+
+  /**
    * @var \derhasi\Composer\PathPreserver[string]
    */
   protected $preservers;
@@ -43,6 +49,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
   public function activate(Composer $composer, IOInterface $io) {
     $this->io = $io;
     $this->composer = $composer;
+    $this->filesystem = new Filesystem();
   }
 
   /**
@@ -65,7 +72,6 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
    * @param \Composer\Script\PackageEvent $event
    */
   public function prePackage(PackageEvent $event) {
-    return;
 
     $packages = $this->getPackagesFromEvent($event);
     $paths = $this->getInstallPathsFromPackages($packages);
@@ -74,7 +80,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
       $paths,
       array(),
       $this->composer->getConfig()->get('cache-dir'),
-      NULL // @todo: get filestystem
+      $this->filesystem
     );
 
     // Store preserver for reuse in post package.
@@ -89,10 +95,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
    * @param \Composer\Script\PackageEvent $event
    */
   public function postPackage(PackageEvent $event) {
-return;
     $packages = $this->getPackagesFromEvent($event);
-    $paths = $this->getInstallPathsFromPackages($packages);
-
     $key = $this->getUniqueNameFromPackages($packages);
     if ($this->preservers[$key]) {
       $this->preservers[$key]->rollback();
