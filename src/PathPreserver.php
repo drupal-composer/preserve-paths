@@ -40,9 +40,13 @@ class PathPreserver {
    * Constructor.
    *
    * @param string[] $installPaths
+   *   Array of install paths (must be absolute)
    * @param string[] $preservePaths
+   *   Array of preservable paths (must be absolute)
    * @param string $cacheDir
+   *   Absolute path to composer cache dir.
    * @param \Composer\Util\FileSystem $filesystem
+   *   The filesystem provided by composer to work with.
    */
   public function __construct($installPaths, $preservePaths, $cacheDir, $filesystem) {
     $this->installPaths = array_unique($installPaths);

@@ -147,7 +147,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
     foreach ($packages as $package) {
       $paths[] = $installationManager->getInstallPath($package);
     }
-    return $paths;
+    return $this->absolutePaths($paths);
   }
 
   /**
@@ -175,13 +175,33 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
     $extra = $this->composer->getPackage()->getExtra();
 
     if (!isset($extra['preserve-paths'])) {
-      return $extra['preserve-paths'];
+      $paths = $extra['preserve-paths'];
     }
     elseif (!is_array($extra['preserve-paths']) && !is_object($extra['preserve-paths'])) {
-      return array($extra['preserve-paths']);
+      $paths = array($extra['preserve-paths']);
     }
     else {
-      return array_values((array) $extra['preserve-paths']);
+      $paths = array_values((array) $extra['preserve-paths']);
     }
+
+    return $this->absolutePaths($paths);
+  }
+
+  /**
+   * Helper to convert relative paths to absolute ones.
+   *
+   * @param string[] $paths
+   * @return string[]
+   */
+  protected function absolutePaths($paths) {
+    $return = array();
+    foreach ($paths as $path) {
+
+      if (!$this->filesystem->isAbsolutePath($path)) {
+        $path = getcwd() . '/' . $path;
+      }
+      $return[] = $path;
+    }
+    return $return;
   }
 }
