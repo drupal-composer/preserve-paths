@@ -1,0 +1,7 @@
+{
+    "name": "derhasi/composer-plugin",
+    "type": "composer-plugin",
+    "require": {
+        "composer-plugin-api": "1.0.0"
+    }
+}
