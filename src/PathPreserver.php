@@ -17,12 +17,12 @@ class PathPreserver {
   protected $cacheDir;
 
   /**
-   * @var string
+   * @var string[]
    */
-  protected $installPath;
+  protected $installPaths;
 
   /**
-   * @var array
+   * @var string[]
    */
   protected $preservePaths;
 
@@ -39,14 +39,14 @@ class PathPreserver {
   /**
    * Constructor.
    *
-   * @param string $installPath
-   * @param array $preservePaths
+   * @param string[] $installPaths
+   * @param string[] $preservePaths
    * @param string $cacheDir
    * @param \Composer\Util\FileSystem $filesystem
    */
-  public function __construct($installPath, $preservePaths, $cacheDir, $filesystem) {
-    $this->installPath = $installPath;
-    $this->preservePaths = $preservePaths;
+  public function __construct($installPaths, $preservePaths, $cacheDir, $filesystem) {
+    $this->installPaths = array_unique($installPaths);
+    $this->preservePaths = array_unique($preservePaths);
     $this->filesystem = $filesystem;
     $this->cacheDir = $cacheDir;
   }
@@ -57,30 +57,32 @@ class PathPreserver {
    */
   protected function preserve() {
 
-    $installPathNormalized = $this->filesystem->normalizePath($this->installPath);
+    foreach ($this->installPaths as $installPath) {
+      $installPathNormalized = $this->filesystem->normalizePath($installPath);
 
-    // Check if any path may be affected by modifying the install path.
-    $backup_paths = array();
-    foreach ($this->preservePaths as $path) {
-      $normalizedPath = $this->filesystem->normalizePath($path);
-      if (file_exists($path) && strpos($normalizedPath, $installPathNormalized) === 0) {
-        $backup_paths[] = $normalizedPath;
+      // Check if any path may be affected by modifying the install path.
+      $backup_paths = array();
+      foreach ($this->preservePaths as $path) {
+        $normalizedPath = $this->filesystem->normalizePath($path);
+        if (file_exists($path) && strpos($normalizedPath, $installPathNormalized) === 0) {
+          $backup_paths[] = $normalizedPath;
+        }
       }
-    }
 
-    // If no paths need to be backed up, we simply proceed.
-    if (empty($backup_paths)) {
-      return;
-    }
+      // If no paths need to be backed up, we simply proceed.
+      if (empty($backup_paths)) {
+        return;
+      }
 
-    $unique = $this->installPath . ' ' . time();
-    $cache_root = $this->filesystem->normalizePath($this->cacheDir . '/preserve-paths/' . sha1($unique));
-    $this->filesystem->ensureDirectoryExists($cache_root);
+      $unique = $installPath . ' ' . time();
+      $cache_root = $this->filesystem->normalizePath($this->cacheDir . '/preserve-paths/' . sha1($unique));
+      $this->filesystem->ensureDirectoryExists($cache_root);
 
-    foreach ($backup_paths as $original) {
-      $backup_location = $cache_root . '/' . sha1($original);
-      $this->filesystem->rename($original, $backup_location);
-      $this->backups[$original] = $backup_location;
+      foreach ($backup_paths as $original) {
+        $backup_location = $cache_root . '/' . sha1($original);
+        $this->filesystem->rename($original, $backup_location);
+        $this->backups[$original] = $backup_location;
+      }
     }
   }
 
