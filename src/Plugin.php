@@ -78,7 +78,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 
     $preserver = new PathPreserver(
       $paths,
-      array(),
+      $this->getPreservePaths(),
       $this->composer->getConfig()->get('cache-dir'),
       $this->filesystem
     );
@@ -133,7 +133,10 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
   }
 
   /**
+   * Retrieve install paths from package installers.
+   *
    * @param \Composer\Package\PackageInterface[] $packages
+   *
    * @return string[]
    */
   protected function getInstallPathsFromPackages(array $packages) {
@@ -163,6 +166,22 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
     return implode(', ', $return);
   }
 
+  /**
+   * Get preserve paths from root configuration.
+   *
+   * @return string[]
+   */
+  protected function getPreservePaths() {
+    $extra = $this->composer->getPackage()->getExtra();
 
-
+    if (!isset($extra['preserve-paths'])) {
+      return $extra['preserve-paths'];
+    }
+    elseif (!is_array($extra['preserve-paths']) && !is_object($extra['preserve-paths'])) {
+      return array($extra['preserve-paths']);
+    }
+    else {
+      return array_values((array) $extra['preserve-paths']);
+    }
+  }
 }
