@@ -75,7 +75,7 @@ class PathPreserver {
 
       // If no paths need to be backed up, we simply proceed.
       if (empty($backup_paths)) {
-        return;
+        continue;
       }
 
       $unique = $installPath . ' ' . time();
