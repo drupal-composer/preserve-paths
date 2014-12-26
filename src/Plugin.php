@@ -80,7 +80,8 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
       $paths,
       $this->getPreservePaths(),
       $this->composer->getConfig()->get('cache-dir'),
-      $this->filesystem
+      $this->filesystem,
+      $this->io
     );
 
     // Store preserver for reuse in post package.

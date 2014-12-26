@@ -32,6 +32,11 @@ class PathPreserver {
   protected $filesystem;
 
   /**
+   * @var \Composer\IO\IOInterface
+   */
+  protected $io;
+
+  /**
    * @var array
    */
   protected $backups = array();
@@ -47,14 +52,16 @@ class PathPreserver {
    *   Absolute path to composer cache dir.
    * @param \Composer\Util\FileSystem $filesystem
    *   The filesystem provided by composer to work with.
+   * @param \Composer\IO\IOInterface $io
+   *   IO interface for writing messages.
    */
-  public function __construct($installPaths, $preservePaths, $cacheDir, $filesystem) {
+  public function __construct($installPaths, $preservePaths, $cacheDir, \Composer\Util\FileSystem $filesystem, \Composer\IO\IOInterface $io) {
     $this->installPaths = array_unique($installPaths);
     $this->preservePaths = array_unique($preservePaths);
     $this->filesystem = $filesystem;
     $this->cacheDir = $cacheDir;
+    $this->io = $io;
   }
-
 
   /**
    * Backs up the paths.
@@ -113,8 +120,7 @@ class PathPreserver {
           $this->filesystem->remove($original);
         }
 
-        // @todo: provide messages to io
-        //$this->io->write(sprintf('<comment>Content of package %s was overwritten with preserved path %s!</comment>', $package->getUniqueName(), $original), true);
+        $this->io->write(sprintf('<comment>Files of installed package were overwritten with preserved path %s!</comment>', $original), true);
       }
 
       $this->filesystem->ensureDirectoryExists(dirname($original));
