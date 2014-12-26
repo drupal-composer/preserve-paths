@@ -55,7 +55,7 @@ class PathPreserver {
   /**
    * Backs up the paths.
    */
-  protected function preserve() {
+  public function preserve() {
 
     foreach ($this->installPaths as $installPath) {
       $installPathNormalized = $this->filesystem->normalizePath($installPath);
@@ -91,7 +91,7 @@ class PathPreserver {
    *
    * @see PathPreserver::backupSubpaths()
    */
-  protected function rollback() {
+  public function rollback() {
     if (empty($this->backups)) {
       return;
     }

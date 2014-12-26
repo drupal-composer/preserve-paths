@@ -13,8 +13,6 @@ use Composer\DependencyResolver\Operation\UninstallOperation;
 use Composer\DependencyResolver\Operation\UpdateOperation;
 use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\IO\IOInterface;
-use Composer\Package\PackageInterface;
-use Composer\Plugin\PluginEvents;
 use Composer\Plugin\PluginInterface;
 use Composer\Script\PackageEvent;
 use Composer\Script\ScriptEvents;
@@ -35,6 +33,11 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
   protected $composer;
 
   /**
+   * @var \derhasi\Composer\PathPreserver[string]
+   */
+  protected $preservers;
+
+  /**
    * {@inheritdoc}
    */
   public function activate(Composer $composer, IOInterface $io) {
@@ -47,53 +50,116 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
    */
   public static function getSubscribedEvents() {
     return array(
-      PluginEvents::PRE_FILE_DOWNLOAD => 'logEvent',
-      PluginEvents::COMMAND => 'logEvent',
-      ScriptEvents::PRE_PACKAGE_INSTALL => 'logPackageEvent',
-      ScriptEvents::POST_PACKAGE_INSTALL => 'logPackageEvent',
-      ScriptEvents::PRE_PACKAGE_UPDATE => 'logPackageEvent',
-      ScriptEvents::POST_PACKAGE_UPDATE => 'logPackageEvent',
-      ScriptEvents::PRE_PACKAGE_UNINSTALL => 'logPackageEvent',
-      ScriptEvents::POST_PACKAGE_UNINSTALL => 'logPackageEvent',
+      ScriptEvents::PRE_PACKAGE_INSTALL => 'prePackage',
+      ScriptEvents::POST_PACKAGE_INSTALL => 'postPackage',
+      ScriptEvents::PRE_PACKAGE_UPDATE => 'prePackage',
+      ScriptEvents::POST_PACKAGE_UPDATE => 'postPackage',
+      ScriptEvents::PRE_PACKAGE_UNINSTALL => 'prePackage',
+      ScriptEvents::POST_PACKAGE_UNINSTALL => 'postPackage',
     );
   }
 
   /**
-   * Simply log event call.
+   * Pre Package event behaviour for backing up preserved paths.
    *
-   * @param \Composer\EventDispatcher\Event $event
+   * @param \Composer\Script\PackageEvent $event
    */
-  public function logEvent($event) {
-    $this->io->write(sprintf('Event called: %s', $event->getName()), TRUE);
+  public function prePackage(PackageEvent $event) {
+    return;
+
+    $packages = $this->getPackagesFromEvent($event);
+    $paths = $this->getInstallPathsFromPackages($packages);
+
+    $preserver = new PathPreserver(
+      $paths,
+      array(),
+      $this->composer->getConfig()->get('cache-dir'),
+      NULL // @todo: get filestystem
+    );
+
+    // Store preserver for reuse in post package.
+    $this->preservers[$this->getUniqueNameFromPackages($packages)] = $preserver;
+
+    $preserver->preserve();
   }
 
-  public function logPackageEvent($event) {
-    if ($event instanceof PackageEvent) {
+  /**
+   * Pre Package event behaviour for backing up preserved paths.
+   *
+   * @param \Composer\Script\PackageEvent $event
+   */
+  public function postPackage(PackageEvent $event) {
+return;
+    $packages = $this->getPackagesFromEvent($event);
+    $paths = $this->getInstallPathsFromPackages($packages);
 
-      $operation = $event->getOperation();
-      if ($operation instanceof InstallOperation) {
-        $package = $operation->getPackage();
-      }
-      elseif ($operation instanceof UpdateOperation) {
-        $package = $operation->getTargetPackage();
-      }
-      elseif ($operation instanceof UninstallOperation) {
-        $package = $operation->getPackage();
-      }
-
-      if ($package && $package instanceof PackageInterface) {
-        /** @var \Composer\Installer\InstallationManager $installationManager */
-        $installationManager = $this->composer->getInstallationManager();
-
-        $path = $installationManager->getInstallPath($package);
-        $this->io->write(sprintf('Event called: %s, Package: %s, Path: %s', $event->getName(), $package->getName(), $path), TRUE);
-      }
-
+    $key = $this->getUniqueNameFromPackages($packages);
+    if ($this->preservers[$key]) {
+      $this->preservers[$key]->rollback();
+      unset($this->preservers[$key]);
     }
-    else {
-      $this->io->write(sprintf('Event called: %s, <error>no package event</error>', $event->getName()), TRUE);
-    }
-
   }
+
+  /**
+   * Retrieves relevant package from the event.
+   *
+   * In the case of update, the target package is retrieved, as that will
+   * provide the path the package will be installed to.
+   *
+   * @param \Composer\Script\PackageEvent $event
+   * @return \Composer\Package\PackageInterface[]
+   * @throws \Exception
+   */
+  protected function getPackagesFromEvent(PackageEvent $event) {
+
+    $operation = $event->getOperation();
+    if ($operation instanceof InstallOperation) {
+      $packages = array($operation->getPackage());
+    }
+    elseif ($operation instanceof UpdateOperation) {
+      $packages = array(
+        $operation->getInitialPackage(),
+        $operation->getTargetPackage(),
+      );
+    }
+    elseif ($operation instanceof UninstallOperation) {
+      $packages = array($operation->getPackage());
+    }
+
+    return $packages;
+  }
+
+  /**
+   * @param \Composer\Package\PackageInterface[] $packages
+   * @return string[]
+   */
+  protected function getInstallPathsFromPackages(array $packages) {
+    /** @var \Composer\Installer\InstallationManager $installationManager */
+    $installationManager = $this->composer->getInstallationManager();
+
+    $paths = array();
+    foreach ($packages as $package) {
+      $paths[] = $installationManager->getInstallPath($package);
+    }
+    return $paths;
+  }
+
+  /**
+   * Provides a unique string for a package combination.
+   *
+   * @param \Composer\Package\PackageInterface[] $packages
+   *
+   * @return string
+   */
+  protected function getUniqueNameFromPackages(array $packages) {
+    $return = array();
+    foreach ($packages as $package) {
+      $return[] = $package->getUniqueName();
+    }
+    sort($return);
+    return implode(', ', $return);
+  }
+
+
 
 }
