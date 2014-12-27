@@ -12,6 +12,11 @@ namespace derhasi\Composer;
 class PathPreserver {
 
   /**
+   * Temporary file permission to allow moving protected paths.
+   */
+  const FILEPERM = 0755;
+
+  /**
    * @var string
    */
   protected $cacheDir;
@@ -37,9 +42,14 @@ class PathPreserver {
   protected $io;
 
   /**
-   * @var array
+   * @var string[string]
    */
   protected $backups = array();
+
+  /**
+   * @var string[string]
+   */
+  protected $filepermissions = array();
 
   /**
    * Constructor.
@@ -72,16 +82,16 @@ class PathPreserver {
       $installPathNormalized = $this->filesystem->normalizePath($installPath);
 
       // Check if any path may be affected by modifying the install path.
-      $backup_paths = array();
+      $relevant_paths = array();
       foreach ($this->preservePaths as $path) {
         $normalizedPath = $this->filesystem->normalizePath($path);
         if (file_exists($path) && strpos($normalizedPath, $installPathNormalized) === 0) {
-          $backup_paths[] = $normalizedPath;
+          $relevant_paths[] = $normalizedPath;
         }
       }
 
       // If no paths need to be backed up, we simply proceed.
-      if (empty($backup_paths)) {
+      if (empty($relevant_paths)) {
         continue;
       }
 
@@ -89,7 +99,11 @@ class PathPreserver {
       $cache_root = $this->filesystem->normalizePath($this->cacheDir . '/preserve-paths/' . sha1($unique));
       $this->filesystem->ensureDirectoryExists($cache_root);
 
-      foreach ($backup_paths as $original) {
+      // Before we back paths up, we need to make sure, permissions are
+      // sufficient to that task.
+      $this->preparePathPermissions($relevant_paths);
+
+      foreach ($relevant_paths as $original) {
         $backup_location = $cache_root . '/' . sha1($original);
         $this->filesystem->rename($original, $backup_location);
         $this->backups[$original] = $backup_location;
@@ -131,8 +145,57 @@ class PathPreserver {
       }
     }
 
+    $this->restorePathPermissions();
+
     // With a clean array, we can start over.
     $this->backups = array();
+  }
+
+  /**
+   * Prepares source paths for backup.
+   *
+   * @param $paths
+   *
+   * @see PathPreserver::restorePathPermissions()
+   */
+  protected function preparePathPermissions($paths) {
+    foreach ($paths as $path) {
+      // In the case the path or its parent is not writable, we cannot move the
+      // path. Therefore we change the permissions temporarily and restore them
+      // later.
+      if (!is_writable($path)) {
+        $this->makePathWritable($path);
+      }
+
+      $parent = dirname($path);
+      if (!is_writable($path)) {
+        $this->makePathWritable($parent);
+      }
+    }
+  }
+
+  /**
+   * Helper to make path writable.
+   *
+   * @param string $path
+   */
+  protected function makePathWritable($path) {
+    $this->filepermissions[$path] = fileperms($path);
+    chmod($path, static::FILEPERM);
+  }
+
+  /**
+   * Restores path permissions that have been changed before.
+   *
+   * @see PathPreserver::preparePathPermissions()
+   */
+  protected function restorePathPermissions() {
+    // We need to restore permissions from parent to child.
+    sort($this->filepermissions);
+
+    foreach ($this->filepermissions as $path => $perm) {
+      chmod($path, $perm);
+    }
   }
 
 }
