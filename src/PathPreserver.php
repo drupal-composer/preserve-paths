@@ -168,7 +168,7 @@ class PathPreserver {
       }
 
       $parent = dirname($path);
-      if (!is_writable($path)) {
+      if (!is_writable($parent)) {
         $this->makePathWritable($parent);
       }
     }
