@@ -1,15 +1,34 @@
 {
-    "name": "derhasi/composer-plugin",
-    "type": "composer-plugin",
-    "require": {
-        "composer-plugin-api": "1.0.0"
-    },
-    "autoload": {
-        "psr-4": {
-          "derhasi\\Composer\\": "src/"
-        }
-      },
-    "extra": {
-        "class": "derhasi\\Composer\\Plugin"
+  "name": "derhasi/composer-preserve-paths",
+  "description": "Composer plugin for preserving custom paths and supporting nested packages",
+  "type": "composer-plugin",
+  "keywords": [
+    "composer-plugin",
+    "installer",
+    "custom path",
+    "nested package"
+  ],
+  "homepage": "https://github.com/derhasi/composer-preserve-paths",
+  "license": "GPL-2.0+",
+  "authors": [
+    {
+      "name": "Johannes Haseitl",
+      "email": "johannes@undpaul.de",
+      "homepage": "http://www.undpaul.de"
     }
+  ],
+  "support": {
+    "issues": "https://github.com/derhasi/composer-preserve-paths/issues"
+  },
+  "require": {
+    "composer-plugin-api": "1.0.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "derhasi\\Composer\\": "src/"
+    }
+  },
+  "extra": {
+    "class": "derhasi\\Composer\\Plugin"
+  }
 }
