@@ -190,8 +190,8 @@ class PathPreserver {
    * @see PathPreserver::preparePathPermissions()
    */
   protected function restorePathPermissions() {
-    // We need to restore permissions from parent to child.
-    sort($this->filepermissions);
+    // We restore child permissions first.
+    arsort($this->filepermissions);
 
     foreach ($this->filepermissions as $path => $perm) {
       chmod($path, $perm);
