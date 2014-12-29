@@ -5,6 +5,7 @@
     backupGlobals="false"
     colors="true"
     bootstrap="vendor/autoload.php"
+    verbose="true"
 >
     <testsuites>
         <testsuite name="composer-preserve-paths">
