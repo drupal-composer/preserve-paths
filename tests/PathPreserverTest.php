@@ -3,21 +3,26 @@
 namespace derhasi\Composer\Tests;
 
 use derhasi\Composer\PathPreserver;
-
 use Composer\Util\Filesystem;
 use Composer\Package\Package;
 use Composer\Package\RootPackage;
 use Composer\Composer;
 use Composer\Config;
-use org\bovigo\vfs\vfsStream;
+use derhasi\tempdirectory\TempDirectory;
 
+require_once __DIR__ . '/../vendor/derhasi/tempdirectory/TempDirectory.php';
 
 class PathPreserverTest extends \PHPUnit_Framework_TestCase {
 
   /**
-   * @var \org\bovigo\vfs\vfsStream
+   * @var \derhasi\tempdirectory\TempDirectory
    */
-  private $root;
+  private $workingDirectory;
+
+  /**
+   * @var \derhasi\tempdirectory\TempDirectory
+   */
+  private $cacheDirectory;
 
   /**
    * set up test environmemt
@@ -25,6 +30,8 @@ class PathPreserverTest extends \PHPUnit_Framework_TestCase {
   public function setUp() {
     $this->fs = new Filesystem();
     $this->io = $this->getMock('Composer\IO\IOInterface');
+    $this->workingDirectory = new TempDirectory('path-preserver-test-working');
+    $this->cacheDirectory = new TempDirectory('path-preserver-test-cache');
   }
 
   /**
@@ -32,38 +39,37 @@ class PathPreserverTest extends \PHPUnit_Framework_TestCase {
    */
   public function testPreserveAndRollback() {
 
-    $cacheDir = vfsStream::setup('cache');
-    $workingDir = vfsStream::setup('working');
-
-    $workingStructure = array(
-      'parentA' => array(
-        'childA' => array(
-          'file1.txt' => 'This is file 1',
-          'file2.txt' => 'This is file 2',
-        ),
-      ),
-    );
-    vfsStream::create($workingStructure, $workingDir);
-
-    $workingDirPath = $workingDir->url();
+    // Create directory to test.
+    $folder1 = $this->workingDirectory->getPath('folder1');
+    mkdir($folder1);
+    $file1 = $this->workingDirectory->getPath('file1.txt');
+    file_put_contents($file1, 'Test content');
 
     // We simulate creation of
     $installPaths = array(
-      $workingDirPath . '/parentA'
+      $this->workingDirectory->getRoot()
     );
 
     $preservePaths = array(
-      $workingDirPath . '/parentA/childA',
-      $workingDirPath . '/parentA/childB',
+      $folder1,
+      $file1,
     );
 
-    $preserver = new PathPreserver($installPaths, $preservePaths, $cacheDir->path(), $this->fs, $this->io);
-    $this->assertTrue(file_exists($workingDirPath . '/parentA/childA/file1.txt'), 'File structure was created.');
+    $preserver = new PathPreserver($installPaths, $preservePaths, $this->cacheDirectory->getRoot(), $this->fs, $this->io);
+    $this->assertTrue(file_exists($folder1) && is_dir($folder1), 'Folder created.');
+    $this->assertTrue(file_exists($file1), 'File created.');
 
     $preserver->preserve();
-    $this->assertFalse(file_exists($workingDirPath . '/parentA/childA'), 'Path was removed for backup.');
+    $this->assertFalse(file_exists($folder1), 'Folder removed for backup.');
+    $this->assertFalse(file_exists($file1), 'File was removed for backup.');
 
     $preserver->rollback();
-    $this->assertTrue(file_exists($workingDirPath . '/parentA/childA/file1.txt'), 'Path was recreated.');
+    $this->assertTrue(file_exists($folder1) && is_dir($folder1), 'Folder recreated.');
+    $this->assertTrue(file_exists($file1), 'File recreated.');
   }
+
+  public function testFileModes() {
+
+  }
+
 }
