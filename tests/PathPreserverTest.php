@@ -10,8 +10,6 @@ use Composer\Composer;
 use Composer\Config;
 use derhasi\tempdirectory\TempDirectory;
 
-require_once __DIR__ . '/../vendor/derhasi/tempdirectory/TempDirectory.php';
-
 class PathPreserverTest extends \PHPUnit_Framework_TestCase {
 
   /**
