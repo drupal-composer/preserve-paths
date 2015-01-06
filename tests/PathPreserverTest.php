@@ -54,16 +54,25 @@ class PathPreserverTest extends \PHPUnit_Framework_TestCase {
     );
 
     $preserver = new PathPreserver($installPaths, $preservePaths, $this->cacheDirectory->getRoot(), $this->fs, $this->io);
-    $this->assertTrue(file_exists($folder1) && is_dir($folder1), 'Folder created.');
-    $this->assertTrue(file_exists($file1), 'File created.');
-
+    $this->assertIsDir($folder1, 'Folder created.');
+    $this->assertFileExists($file1, 'File created.');
     $preserver->preserve();
-    $this->assertFalse(file_exists($folder1), 'Folder removed for backup.');
-    $this->assertFalse(file_exists($file1), 'File was removed for backup.');
+    $this->assertFileNotExists($folder1, 'Folder removed for backup.');
+    $this->assertFileNotExists($file1, 'File was removed for backup.');
 
     $preserver->rollback();
-    $this->assertTrue(file_exists($folder1) && is_dir($folder1), 'Folder recreated.');
-    $this->assertTrue(file_exists($file1), 'File recreated.');
+    $this->assertIsDir($folder1, 'Folder recreated.');
+    $this->assertFileExists($file1, 'File recreated.');
+  }
+
+  /**
+   * Custom assertion for existing directory.
+   *
+   * @param $path
+   * @param string $message
+   */
+  protected function assertIsDir($path, $message = '') {
+    $this->assertTrue(file_exists($path) && is_dir($path), $message);
   }
 
   public function testFileModes() {
