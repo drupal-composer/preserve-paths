@@ -85,7 +85,7 @@ class PathPreserver {
       $relevant_paths = array();
       foreach ($this->preservePaths as $path) {
         $normalizedPath = $this->filesystem->normalizePath($path);
-        if (file_exists($path) && strpos($normalizedPath, $installPathNormalized) === 0) {
+        if (static::file_exists($path) && strpos($normalizedPath, $installPathNormalized) === 0) {
           $relevant_paths[] = $normalizedPath;
         }
       }
@@ -125,7 +125,7 @@ class PathPreserver {
 
       // Remove any code that was placed by the package at the place of
       // the original path.
-      if (file_exists($original)) {
+      if (static::file_exists($original)) {
         if (is_dir($original)) {
           $this->filesystem->emptyDirectory($original, false);
           $this->filesystem->removeDirectory($original);
@@ -137,7 +137,10 @@ class PathPreserver {
         $this->io->write(sprintf('<comment>Files of installed package were overwritten with preserved path %s!</comment>', $original), true);
       }
 
-      $this->filesystem->ensureDirectoryExists(dirname($original));
+      $folder = dirname($original);
+      $this->filesystem->ensureDirectoryExists($folder);
+      // Make sure we can write the file to the folder.
+      $this->makePathWritable($folder);
       $this->filesystem->rename($backup_location, $original);
 
       if ($this->filesystem->isDirEmpty(dirname($backup_location))) {
@@ -145,6 +148,8 @@ class PathPreserver {
       }
     }
 
+    // Restore all path permissions, that where set for the sake of moving
+    // things around.
     $this->restorePathPermissions();
 
     // With a clean array, we can start over.
@@ -180,6 +185,12 @@ class PathPreserver {
    * @param string $path
    */
   protected function makePathWritable($path) {
+    // Make parent writable, before we can change the path itself.
+    $parent = dirname($path);
+    if ($parent != '.' && !is_writable($parent)) {
+      $this->makePathWritable($parent);
+    }
+
     $this->filepermissions[$path] = fileperms($path);
     chmod($path, static::FILEPERM);
   }
@@ -197,5 +208,64 @@ class PathPreserver {
       chmod($path, $perm);
     }
   }
+
+  /**
+   * Check if file really exists.
+   *
+   * As php can only determine, whether a file or folder exists when the parent
+   * directory is executable, we need to provide a workaround.
+   *
+   * @param $path
+   *   The path as in file_exists()
+   *
+   * @return bool
+   *   Returns TRUE if file exists, like in file_exists(),
+   *   but without restriction.
+   *
+   * @see file_exists()
+   */
+  static public function file_exists($path) {
+
+    // Get all parent directories.
+    $folders = array();
+    $reset_perms = array();
+    $folder = $path;
+    while ($folder = dirname($folder)) {
+      if ($folder === '.' || $folder === '/') {
+        break;
+      }
+      elseif ($folder === '') {
+        continue;
+      }
+      $folders[] = $folder;
+    }
+
+    foreach (array_reverse($folders) as $current_folder) {
+      // In the case a parent folder does not exist, the file cannot exist.
+      if (!is_dir($current_folder)) {
+        $return = FALSE;
+        break;
+      }
+      // In the case the folder is really a folder, but not executable, we need
+      // to change that, so we can check if the file really exists.
+      elseif (!is_executable($current_folder)) {
+        $reset_perms[$current_folder] = fileperms($current_folder);
+        chmod($current_folder, 0755);
+      }
+    }
+
+    if (!isset($return)) {
+      $return = file_exists($path);
+    }
+
+    // Reset permissions in reverse order.
+    foreach (array_reverse($reset_perms, TRUE) as $folder => $mode) {
+      chmod($folder, $mode);
+    }
+
+    return $return;
+  }
+
+
 
 }
