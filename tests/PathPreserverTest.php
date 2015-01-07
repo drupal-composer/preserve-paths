@@ -66,6 +66,36 @@ class PathPreserverTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
+   * Test file_exists() restrictions on non executable directories.
+   */
+  public function testFileExists() {
+
+    $folder1 = $this->workingDirectory->getPath('folder1');
+    $subfolder1 = $this->workingDirectory->getPath('folder1/subfolder1');
+    $file1 = $this->workingDirectory->getPath('folder1/subfolder1/file1.txt');
+    $file2 = $this->workingDirectory->getPath('folder1/file2.txt');
+
+    mkdir($folder1);
+    mkdir($subfolder1);
+    file_put_contents($file1, '');
+    file_put_contents($file2, '');
+
+    $this->assertIsDir($folder1);
+    $this->assertIsDir($subfolder1);
+    $this->assertFileExists($file1);
+    $this->assertFileExists($file2);
+
+    // After chaning the file mode of the parent directory, no containing files
+    // or folders can be found anymore.
+    chmod($folder1, 0400);
+
+    $this->assertTrue(file_exists($folder1), 'Folder is still present.');
+    $this->assertFalse(file_exists($subfolder1), 'File exists retures FALSE for subfolder');
+    $this->assertFalse(file_exists($file1), 'File exists retures FALSE for subfolder');
+    $this->assertFalse(file_exists($file2), 'File exists retures FALSE for subfolder');
+  }
+
+  /**
    * Test perservation and rollback on tricky path permissions.
    *
    * @depends testPreserveAndRollback
