@@ -28,24 +28,24 @@ class PathPreserverTest extends \PHPUnit_Framework_TestCase {
   public function setUp() {
     $this->fs = new Filesystem();
     $this->io = $this->getMock('Composer\IO\IOInterface');
-    $this->workingDirectory = new TempDirectory('path-preserver-test-working');
-    $this->cacheDirectory = new TempDirectory('path-preserver-test-cache');
   }
 
   /**
-   * test that the directory is created
+   * Tests that the directory is created
    */
   public function testPreserveAndRollback() {
+    $workingDirectory = new TempDirectory(__METHOD__);
+    $cacheDirectory = new TempDirectory(__METHOD__ . '-cache');
 
     // Create directory to test.
-    $folder1 = $this->workingDirectory->getPath('folder1');
+    $folder1 = $workingDirectory->getPath('folder1');
     mkdir($folder1);
-    $file1 = $this->workingDirectory->getPath('file1.txt');
+    $file1 = $workingDirectory->getPath('file1.txt');
     file_put_contents($file1, 'Test content');
 
     // We simulate creation of
     $installPaths = array(
-      $this->workingDirectory->getRoot()
+      $workingDirectory->getRoot()
     );
 
     $preservePaths = array(
@@ -53,7 +53,7 @@ class PathPreserverTest extends \PHPUnit_Framework_TestCase {
       $file1,
     );
 
-    $preserver = new PathPreserver($installPaths, $preservePaths, $this->cacheDirectory->getRoot(), $this->fs, $this->io);
+    $preserver = new PathPreserver($installPaths, $preservePaths, $cacheDirectory->getRoot(), $this->fs, $this->io);
     $this->assertIsDir($folder1, 'Folder created.');
     $this->assertFileExists($file1, 'File created.');
     $preserver->preserve();
@@ -66,14 +66,15 @@ class PathPreserverTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
-   * Test file_exists() restrictions on non executable directories.
+   * Tests file_exists() restrictions on non executable directories.
    */
   public function testFileExists() {
+    $workingDirectory = new TempDirectory(__METHOD__);
 
-    $folder1 = $this->workingDirectory->getPath('folder1');
-    $subfolder1 = $this->workingDirectory->getPath('folder1/subfolder1');
-    $file1 = $this->workingDirectory->getPath('folder1/subfolder1/file1.txt');
-    $file2 = $this->workingDirectory->getPath('folder1/file2.txt');
+    $folder1 = $workingDirectory->getPath('folder1');
+    $subfolder1 = $workingDirectory->getPath('folder1/subfolder1');
+    $file1 = $workingDirectory->getPath('folder1/subfolder1/file1.txt');
+    $file2 = $workingDirectory->getPath('folder1/file2.txt');
 
     mkdir($folder1);
     mkdir($subfolder1);
@@ -96,22 +97,24 @@ class PathPreserverTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
-   * Test perservation and rollback on tricky path permissions.
+   * Tests preservation and rollback on tricky path permissions.
    *
    * @depends testPreserveAndRollback
    */
   public function testFileModes() {
+    $workingDirectory = new TempDirectory(__METHOD__);
+    $cacheDirectory = new TempDirectory(__METHOD__ . '-cache');
 
     // Create directory to test.
-    $folder1 = $this->workingDirectory->getPath('folder1');
+    $folder1 = $workingDirectory->getPath('folder1');
     mkdir($folder1);
 
-    $subfolder1 = $this->workingDirectory->getPath('folder1/subfolder1');
+    $subfolder1 = $workingDirectory->getPath('folder1/subfolder1');
     mkdir($subfolder1);
 
-    $file1 = $this->workingDirectory->getPath('folder1/file1.txt');
+    $file1 = $workingDirectory->getPath('folder1/file1.txt');
     file_put_contents($file1, 'Test content');
-    $file2 = $this->workingDirectory->getPath('folder1/file2.txt');
+    $file2 = $workingDirectory->getPath('folder1/file2.txt');
     file_put_contents($file2, 'Test content 2');
 
     // After changing some permissions we test if the given paths can be
@@ -136,7 +139,7 @@ class PathPreserverTest extends \PHPUnit_Framework_TestCase {
       $file2,
     );
 
-    $preserver = new PathPreserver($installPaths, $preservePaths, $this->cacheDirectory->getRoot(), $this->fs, $this->io);
+    $preserver = new PathPreserver($installPaths, $preservePaths, $cacheDirectory->getRoot(), $this->fs, $this->io);
 
     // We check if preservation works even with restrictive permissions.
     chmod($folder1, 0400);
