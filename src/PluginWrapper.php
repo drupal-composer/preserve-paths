@@ -21,7 +21,7 @@ use Composer\Util\Filesystem;
 /**
  * Wrapper for making Plugin debuggable.
  */
-class PluginWrapper implements {
+class PluginWrapper {
 
   /**
    * @var \Composer\IO\IOInterface
