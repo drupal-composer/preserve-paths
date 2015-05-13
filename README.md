@@ -40,7 +40,7 @@ An example composer.json using [davidbarratt/custom-installer](https://packagist
   "repositories": [
     {
       "type": "composer",
-      "url": "http://drupal-packagist.webflo.io/"
+      "url": "https://packagist.drupal-composer.org/"
     }
   ],
   "require": {
