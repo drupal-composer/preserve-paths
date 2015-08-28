@@ -16,7 +16,7 @@ Simply install the plugin with composer: `composer require derhasi/composer-pres
 
 ## Configuration
 
-For configuring the paths you need to set `preserver-paths` within the `extra` of your root `composer.json`.
+For configuring the paths you need to set `preserve-paths` within the `extra` of your root `composer.json`.
 
 ```json
 {
