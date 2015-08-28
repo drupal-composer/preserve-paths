@@ -7,7 +7,7 @@ This way you can:
 * provide custom files or directories that will not be overwritten on `composer install` or `composer update`
 * place packages within the directory of another package (using a composer installer like
 [composer/installers](https://packagist.org/packages/composer/installers) or
-[davidbarratt/custom-installer](https://packagist.org/packages/davidbarratt/custom-installer)
+[davidbarratt/custom-installer](https://packagist.org/packages/davidbarratt/custom-installer))
 
 
 ## Installation
