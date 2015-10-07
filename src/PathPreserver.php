@@ -231,7 +231,7 @@ class PathPreserver {
     $reset_perms = array();
     $folder = $path;
     while ($folder = dirname($folder)) {
-      if ($folder === '.' || $folder === '/') {
+      if ($folder === '.' || $folder === '/' || strpos($folder, ':\\')) {
         break;
       }
       elseif ($folder === '') {
