@@ -7,7 +7,7 @@ This way you can:
 * provide custom files or directories that will not be overwritten on `composer install` or `composer update`
 * place packages within the directory of another package (using a composer installer like
 [composer/installers](https://packagist.org/packages/composer/installers) or
-[davidbarratt/custom-installer](https://packagist.org/packages/davidbarratt/custom-installer)
+[davidbarratt/custom-installer](https://packagist.org/packages/davidbarratt/custom-installer))
 
 
 ## Installation
@@ -16,7 +16,7 @@ Simply install the plugin with composer: `composer require derhasi/composer-pres
 
 ## Configuration
 
-For configuring the paths you need to set `preserver-paths` within the `extra` of your root `composer.json`.
+For configuring the paths you need to set `preserve-paths` within the `extra` of your root `composer.json`.
 
 ```json
 {
