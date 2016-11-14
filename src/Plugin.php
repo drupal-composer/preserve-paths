@@ -14,7 +14,7 @@ use Composer\DependencyResolver\Operation\UpdateOperation;
 use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\IO\IOInterface;
 use Composer\Plugin\PluginInterface;
-use Composer\Script\PackageEvent;
+use Composer\Installer\PackageEvent;
 use Composer\Script\ScriptEvents;
 use Composer\Util\Filesystem;
 
@@ -52,7 +52,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
   /**
    * Pre Package event behaviour for backing up preserved paths.
    *
-   * @param \Composer\Script\PackageEvent $event
+   * @param \Composer\Installer\PackageEvent $event
    */
   public function prePackage(PackageEvent $event) {
 
@@ -62,7 +62,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
   /**
    * Pre Package event behaviour for backing up preserved paths.
    *
-   * @param \Composer\Script\PackageEvent $event
+   * @param \Composer\Installer\PackageEvent $event
    */
   public function postPackage(PackageEvent $event) {
     $this->wrapper->postPackage($event);
