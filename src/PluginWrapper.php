@@ -14,7 +14,7 @@ use Composer\DependencyResolver\Operation\UpdateOperation;
 use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\IO\IOInterface;
 use Composer\Plugin\PluginInterface;
-use Composer\Script\PackageEvent;
+use Composer\Installer\PackageEvent;
 use Composer\Script\ScriptEvents;
 use Composer\Util\Filesystem;
 
@@ -55,7 +55,7 @@ class PluginWrapper {
   /**
    * Pre Package event behaviour for backing up preserved paths.
    *
-   * @param \Composer\Script\PackageEvent $event
+   * @param \Composer\Installer\PackageEvent $event
    */
   public function prePackage(PackageEvent $event) {
 
@@ -79,7 +79,7 @@ class PluginWrapper {
   /**
    * Pre Package event behaviour for backing up preserved paths.
    *
-   * @param \Composer\Script\PackageEvent $event
+   * @param \Composer\Installer\PackageEvent $event
    */
   public function postPackage(PackageEvent $event) {
     $packages = $this->getPackagesFromEvent($event);
@@ -96,7 +96,7 @@ class PluginWrapper {
    * In the case of update, the target package is retrieved, as that will
    * provide the path the package will be installed to.
    *
-   * @param \Composer\Script\PackageEvent $event
+   * @param \Composer\Installer\PackageEvent $event
    * @return \Composer\Package\PackageInterface[]
    * @throws \Exception
    */
