@@ -1,5 +1,5 @@
 {
-  "name": "derhasi/composer-preserve-paths",
+  "name": "deminy/composer-preserve-paths",
   "description": "Composer plugin for preserving custom paths and supporting nested packages",
   "type": "composer-plugin",
   "keywords": [
@@ -8,32 +8,25 @@
     "custom path",
     "nested package"
   ],
-  "homepage": "https://github.com/derhasi/composer-preserve-paths",
+  "homepage": "https://github.com/deminy/composer-preserve-paths",
   "license": "GPL-2.0+",
-  "authors": [
-    {
-      "name": "Johannes Haseitl",
-      "email": "johannes@undpaul.de",
-      "homepage": "http://www.undpaul.de"
-    }
-  ],
   "support": {
-    "issues": "https://github.com/derhasi/composer-preserve-paths/issues"
+    "issues": "https://github.com/deminy/composer-preserve-paths/issues"
   },
   "require": {
     "composer-plugin-api": "^1.0"
   },
   "require-dev": {
-    "composer/composer": "1.0.*@dev",
-    "phpunit/phpunit": "4.4.*",
-    "derhasi/tempdirectory": "0.1.*"
+    "composer/composer": "~1.0",
+    "derhasi/tempdirectory": "0.1.*",
+    "phpunit/phpunit": ">=4.4"
   },
   "autoload": {
     "psr-4": {
-      "derhasi\\Composer\\": "src/"
+      "deminy\\Composer\\": "src/"
     }
   },
   "extra": {
-    "class": "derhasi\\Composer\\Plugin"
+    "class": "deminy\\Composer\\Plugin"
   }
 }
