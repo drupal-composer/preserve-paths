@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/deminy/composer-preserve-paths.svg?branch=master)](https://travis-ci.org/deminy/composer-preserve-paths)
 [![HHVM Status](http://hhvm.h4cc.de/badge/deminy/composer-preserve-paths.svg)](http://hhvm.h4cc.de/package/deminy/composer-preserve-paths)
+[![Latest Stable Version](https://poser.pugx.org/deminy/composer-preserve-paths/v/stable.svg)](https://packagist.org/packages/deminy/composer-preserve-paths)
 [![Latest Unstable Version](https://poser.pugx.org/deminy/composer-preserve-paths/v/unstable.svg)](https://packagist.org/packages/deminy/composer-preserve-paths)
 [![License](https://poser.pugx.org/deminy/composer-preserve-paths/license.svg)](https://packagist.org/packages/deminy/composer-preserve-paths)
 
@@ -31,7 +32,10 @@ For configuring the paths you need to set `preserve-paths` within the `extra` of
           "htdocs/sites/all/modules/contrib",
           "htdocs/sites/all/themes/contrib",
           "htdocs/sites/all/libraries",
-          "htdocs/sites/all/drush"
+          "htdocs/sites/all/drush",
+          "htdocs/sites/*.com",
+          "htdocs/sites/*.net",
+          "htdocs/sites/*.org"
         ]
       }
 }
