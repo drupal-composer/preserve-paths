@@ -10,6 +10,9 @@ use Composer\Composer;
 use Composer\Config;
 use derhasi\tempdirectory\TempDirectory;
 
+/**
+ * Test for path preserver functionality.
+ */
 class PathPreserverTest extends \PHPUnit_Framework_TestCase
 {
 

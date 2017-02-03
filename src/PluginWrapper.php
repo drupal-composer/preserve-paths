@@ -138,6 +138,7 @@ class PluginWrapper
         foreach ($packages as $package) {
             $paths[] = $installationManager->getInstallPath($package);
         }
+
         return $this->absolutePaths($paths);
     }
 
@@ -155,6 +156,7 @@ class PluginWrapper
             $return[] = $package->getUniqueName();
         }
         sort($return);
+
         return implode(', ', $return);
     }
 
@@ -193,6 +195,7 @@ class PluginWrapper
             }
             $return[] = $path;
         }
+
         return $return;
     }
 }
