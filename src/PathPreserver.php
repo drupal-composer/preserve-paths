@@ -12,60 +12,60 @@ namespace derhasi\Composer;
 class PathPreserver
 {
 
-  /**
-   * Temporary file permission to allow moving protected paths.
-   */
+    /**
+     * Temporary file permission to allow moving protected paths.
+     */
     const FILEPERM = 0755;
 
-  /**
-   * @var string
-   */
+    /**
+     * @var string
+     */
     protected $cacheDir;
 
-  /**
-   * @var string[]
-   */
+    /**
+     * @var string[]
+     */
     protected $installPaths;
 
-  /**
-   * @var string[]
-   */
+    /**
+     * @var string[]
+     */
     protected $preservePaths;
 
-  /**
-   * @var \Composer\Util\FileSystem
-   */
+    /**
+     * @var \Composer\Util\FileSystem
+     */
     protected $filesystem;
 
-  /**
-   * @var \Composer\IO\IOInterface
-   */
+    /**
+     * @var \Composer\IO\IOInterface
+     */
     protected $io;
 
-  /**
-   * @var string[string]
-   */
+    /**
+     * @var string[string]
+     */
     protected $backups = array();
 
-  /**
-   * @var string[string]
-   */
+    /**
+     * @var string[string]
+     */
     protected $filepermissions = array();
 
-  /**
-   * Constructor.
-   *
-   * @param string[]                  $installPaths
-   *   Array of install paths (must be absolute)
-   * @param string[]                  $preservePaths
-   *   Array of preservable paths (must be absolute)
-   * @param string                    $cacheDir
-   *   Absolute path to composer cache dir.
-   * @param \Composer\Util\FileSystem $filesystem
-   *   The filesystem provided by composer to work with.
-   * @param \Composer\IO\IOInterface  $io
-   *   IO interface for writing messages.
-   */
+    /**
+     * Constructor.
+     *
+     * @param string[]                  $installPaths
+     *   Array of install paths (must be absolute)
+     * @param string[]                  $preservePaths
+     *   Array of preservable paths (must be absolute)
+     * @param string                    $cacheDir
+     *   Absolute path to composer cache dir.
+     * @param \Composer\Util\FileSystem $filesystem
+     *   The filesystem provided by composer to work with.
+     * @param \Composer\IO\IOInterface  $io
+     *   IO interface for writing messages.
+     */
     public function __construct($installPaths, $preservePaths, $cacheDir, \Composer\Util\FileSystem $filesystem, \Composer\IO\IOInterface $io)
     {
         $this->installPaths = array_unique($installPaths);
@@ -75,9 +75,9 @@ class PathPreserver
         $this->io = $io;
     }
 
-  /**
-   * Backs up the paths.
-   */
+    /**
+     * Backs up the paths.
+     */
     public function preserve()
     {
 
@@ -114,11 +114,11 @@ class PathPreserver
         }
     }
 
-  /**
-   * Restore previously backed up paths.
-   *
-   * @see PathPreserver::backupSubpaths()
-   */
+    /**
+     * Restore previously backed up paths.
+     *
+     * @see PathPreserver::backupSubpaths()
+     */
     public function rollback()
     {
         if (empty($this->backups)) {
@@ -158,21 +158,21 @@ class PathPreserver
         $this->backups = array();
     }
 
-  /**
-   * Check if file really exists.
-   *
-   * As php can only determine, whether a file or folder exists when the parent
-   * directory is executable, we need to provide a workaround.
-   *
-   * @param string $path
-   *   The path as in file_exists()
-   *
-   * @return bool
-   *   Returns TRUE if file exists, like in file_exists(),
-   *   but without restriction.
-   *
-   * @see file_exists()
-   */
+    /**
+     * Check if file really exists.
+     *
+     * As php can only determine, whether a file or folder exists when the parent
+     * directory is executable, we need to provide a workaround.
+     *
+     * @param string $path
+     *   The path as in file_exists()
+     *
+     * @return bool
+     *   Returns TRUE if file exists, like in file_exists(),
+     *   but without restriction.
+     *
+     * @see file_exists()
+     */
     public static function fileExists($path)
     {
 
@@ -238,11 +238,11 @@ class PathPreserver
         }
     }
 
-  /**
-   * Helper to make path writable.
-   *
-   * @param string $path
-   */
+    /**
+     * Helper to make path writable.
+     *
+     * @param string $path
+     */
     protected function makePathWritable($path)
     {
         // Make parent writable, before we can change the path itself.
@@ -255,11 +255,11 @@ class PathPreserver
         chmod($path, static::FILEPERM);
     }
 
-  /**
-   * Restores path permissions that have been changed before.
-   *
-   * @see PathPreserver::preparePathPermissions()
-   */
+    /**
+     * Restores path permissions that have been changed before.
+     *
+     * @see PathPreserver::preparePathPermissions()
+     */
     protected function restorePathPermissions()
     {
         // We restore child permissions first.

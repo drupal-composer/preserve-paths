@@ -13,18 +13,18 @@ use derhasi\tempdirectory\TempDirectory;
 class PathPreserverTest extends \PHPUnit_Framework_TestCase
 {
 
-  /**
-   * set up test environmemt
-   */
+    /**
+     * set up test environmemt
+     */
     public function setUp()
     {
         $this->fs = new Filesystem();
         $this->io = $this->getMock('Composer\IO\IOInterface');
     }
 
-  /**
-   * Tests that the directory is created
-   */
+    /**
+     * Tests that the directory is created
+     */
     public function testPreserveAndRollback()
     {
         $workingDirectory = new TempDirectory(__METHOD__);
@@ -58,9 +58,9 @@ class PathPreserverTest extends \PHPUnit_Framework_TestCase
         $this->assertFileExists($file1, 'File recreated.');
     }
 
-  /**
-   * Tests file_exists() restrictions on non executable directories.
-   */
+    /**
+     * Tests file_exists() restrictions on non executable directories.
+     */
     public function testFileExists()
     {
         $workingDirectory = new TempDirectory(__METHOD__);
@@ -90,11 +90,11 @@ class PathPreserverTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse(file_exists($file2), 'File exists retures FALSE for subfolder');
     }
 
-  /**
-   * Tests preservation and rollback on tricky path permissions.
-   *
-   * @depends testPreserveAndRollback
-   */
+    /**
+     * Tests preservation and rollback on tricky path permissions.
+     *
+     * @depends testPreserveAndRollback
+     */
     public function testFileModes()
     {
         $workingDirectory = new TempDirectory(__METHOD__);
@@ -156,12 +156,12 @@ class PathPreserverTest extends \PHPUnit_Framework_TestCase
         $this->assertFileExists($file2, 'File 2 recreated.');
     }
 
-  /**
-   * Custom assertion for existing directory.
-   *
-   * @param $path
-   * @param string $message
-   */
+    /**
+     * Custom assertion for existing directory.
+     *
+     * @param $path
+     * @param string $message
+     */
     protected function assertIsDir($path, $message = '')
     {
         $this->assertTrue(file_exists($path) && is_dir($path), $message);

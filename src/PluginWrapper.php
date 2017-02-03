@@ -24,29 +24,29 @@ use Composer\Util\Filesystem;
 class PluginWrapper
 {
 
-  /**
-   * @var \Composer\IO\IOInterface
-   */
+    /**
+     * @var \Composer\IO\IOInterface
+     */
     protected $io;
 
-  /**
-   * @var \Composer\Composer
-   */
+    /**
+     * @var \Composer\Composer
+     */
     protected $composer;
 
-  /**
-   * @var \Composer\Util\Filesystem
-   */
+    /**
+     * @var \Composer\Util\Filesystem
+     */
     protected $filesystem;
 
-  /**
-   * @var \derhasi\Composer\PathPreserver[string]
-   */
+    /**
+     * @var \derhasi\Composer\PathPreserver[string]
+     */
     protected $preservers;
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function __construct(Composer $composer, IOInterface $io)
     {
         $this->io = $io;
@@ -54,11 +54,11 @@ class PluginWrapper
         $this->filesystem = new Filesystem();
     }
 
-  /**
-   * Pre Package event behaviour for backing up preserved paths.
-   *
-   * @param \Composer\Script\PackageEvent $event
-   */
+    /**
+     * Pre Package event behaviour for backing up preserved paths.
+     *
+     * @param \Composer\Script\PackageEvent $event
+     */
     public function prePackage(PackageEvent $event)
     {
 
@@ -79,11 +79,11 @@ class PluginWrapper
         $preserver->preserve();
     }
 
-  /**
-   * Pre Package event behaviour for backing up preserved paths.
-   *
-   * @param \Composer\Script\PackageEvent $event
-   */
+    /**
+     * Pre Package event behaviour for backing up preserved paths.
+     *
+     * @param \Composer\Script\PackageEvent $event
+     */
     public function postPackage(PackageEvent $event)
     {
         $packages = $this->getPackagesFromEvent($event);
@@ -94,16 +94,16 @@ class PluginWrapper
         }
     }
 
-  /**
-   * Retrieves relevant package from the event.
-   *
-   * In the case of update, the target package is retrieved, as that will
-   * provide the path the package will be installed to.
-   *
-   * @param \Composer\Script\PackageEvent $event
-   * @return \Composer\Package\PackageInterface[]
-   * @throws \Exception
-   */
+    /**
+     * Retrieves relevant package from the event.
+     *
+     * In the case of update, the target package is retrieved, as that will
+     * provide the path the package will be installed to.
+     *
+     * @param \Composer\Script\PackageEvent $event
+     * @return \Composer\Package\PackageInterface[]
+     * @throws \Exception
+     */
     protected function getPackagesFromEvent(PackageEvent $event)
     {
 
@@ -122,13 +122,13 @@ class PluginWrapper
         return $packages;
     }
 
-  /**
-   * Retrieve install paths from package installers.
-   *
-   * @param \Composer\Package\PackageInterface[] $packages
-   *
-   * @return string[]
-   */
+    /**
+     * Retrieve install paths from package installers.
+     *
+     * @param \Composer\Package\PackageInterface[] $packages
+     *
+     * @return string[]
+     */
     protected function getInstallPathsFromPackages(array $packages)
     {
         /** @var \Composer\Installer\InstallationManager $installationManager */
@@ -141,13 +141,13 @@ class PluginWrapper
         return $this->absolutePaths($paths);
     }
 
-  /**
-   * Provides a unique string for a package combination.
-   *
-   * @param \Composer\Package\PackageInterface[] $packages
-   *
-   * @return string
-   */
+    /**
+     * Provides a unique string for a package combination.
+     *
+     * @param \Composer\Package\PackageInterface[] $packages
+     *
+     * @return string
+     */
     protected function getUniqueNameFromPackages(array $packages)
     {
         $return = array();
@@ -158,11 +158,11 @@ class PluginWrapper
         return implode(', ', $return);
     }
 
-  /**
-   * Get preserve paths from root configuration.
-   *
-   * @return string[]
-   */
+    /**
+     * Get preserve paths from root configuration.
+     *
+     * @return string[]
+     */
     protected function getPreservePaths()
     {
         $extra = $this->composer->getPackage()->getExtra();
@@ -178,12 +178,12 @@ class PluginWrapper
         return $this->absolutePaths($paths);
     }
 
-  /**
-   * Helper to convert relative paths to absolute ones.
-   *
-   * @param string[] $paths
-   * @return string[]
-   */
+    /**
+     * Helper to convert relative paths to absolute ones.
+     *
+     * @param string[] $paths
+     * @return string[]
+     */
     protected function absolutePaths($paths)
     {
         $return = array();

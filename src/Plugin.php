@@ -24,22 +24,22 @@ use Composer\Util\Filesystem;
 class Plugin implements PluginInterface, EventSubscriberInterface
 {
 
-  /**
-   * @var \derhasi\Composer\PluginWrapper
-   */
+    /**
+     * @var \derhasi\Composer\PluginWrapper
+     */
     protected $wrapper;
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function activate(Composer $composer, IOInterface $io)
     {
         $this->wrapper = new PluginWrapper($composer, $io);
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public static function getSubscribedEvents()
     {
         return array(
@@ -52,22 +52,22 @@ class Plugin implements PluginInterface, EventSubscriberInterface
         );
     }
 
-  /**
-   * Pre Package event behaviour for backing up preserved paths.
-   *
-   * @param \Composer\Script\PackageEvent $event
-   */
+    /**
+     * Pre Package event behaviour for backing up preserved paths.
+     *
+     * @param \Composer\Script\PackageEvent $event
+     */
     public function prePackage(PackageEvent $event)
     {
 
         $this->wrapper->prePackage($event);
     }
 
-  /**
-   * Pre Package event behaviour for backing up preserved paths.
-   *
-   * @param \Composer\Script\PackageEvent $event
-   */
+    /**
+     * Pre Package event behaviour for backing up preserved paths.
+     *
+     * @param \Composer\Script\PackageEvent $event
+     */
     public function postPackage(PackageEvent $event)
     {
         $this->wrapper->postPackage($event);
