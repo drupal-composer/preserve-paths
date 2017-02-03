@@ -21,51 +21,55 @@ use Composer\Util\Filesystem;
 /**
  * Class Plugin.
  */
-class Plugin implements PluginInterface, EventSubscriberInterface {
+class Plugin implements PluginInterface, EventSubscriberInterface
+{
 
   /**
    * @var \derhasi\Composer\PluginWrapper
    */
-  protected $wrapper;
+    protected $wrapper;
 
   /**
    * {@inheritdoc}
    */
-  public function activate(Composer $composer, IOInterface $io) {
-    $this->wrapper = new PluginWrapper($composer, $io);
-  }
+    public function activate(Composer $composer, IOInterface $io)
+    {
+        $this->wrapper = new PluginWrapper($composer, $io);
+    }
 
   /**
    * {@inheritdoc}
    */
-  public static function getSubscribedEvents() {
-    return array(
-      ScriptEvents::PRE_PACKAGE_INSTALL => 'prePackage',
-      ScriptEvents::POST_PACKAGE_INSTALL => 'postPackage',
-      ScriptEvents::PRE_PACKAGE_UPDATE => 'prePackage',
-      ScriptEvents::POST_PACKAGE_UPDATE => 'postPackage',
-      ScriptEvents::PRE_PACKAGE_UNINSTALL => 'prePackage',
-      ScriptEvents::POST_PACKAGE_UNINSTALL => 'postPackage',
-    );
-  }
+    public static function getSubscribedEvents()
+    {
+        return array(
+        ScriptEvents::PRE_PACKAGE_INSTALL => 'prePackage',
+        ScriptEvents::POST_PACKAGE_INSTALL => 'postPackage',
+        ScriptEvents::PRE_PACKAGE_UPDATE => 'prePackage',
+        ScriptEvents::POST_PACKAGE_UPDATE => 'postPackage',
+        ScriptEvents::PRE_PACKAGE_UNINSTALL => 'prePackage',
+        ScriptEvents::POST_PACKAGE_UNINSTALL => 'postPackage',
+        );
+    }
 
   /**
    * Pre Package event behaviour for backing up preserved paths.
    *
    * @param \Composer\Script\PackageEvent $event
    */
-  public function prePackage(PackageEvent $event) {
+    public function prePackage(PackageEvent $event)
+    {
 
-    $this->wrapper->prePackage($event);
-  }
+        $this->wrapper->prePackage($event);
+    }
 
   /**
    * Pre Package event behaviour for backing up preserved paths.
    *
    * @param \Composer\Script\PackageEvent $event
    */
-  public function postPackage(PackageEvent $event) {
-    $this->wrapper->postPackage($event);
-  }
-
+    public function postPackage(PackageEvent $event)
+    {
+        $this->wrapper->postPackage($event);
+    }
 }
