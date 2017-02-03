@@ -58,7 +58,10 @@ class FixturesTest extends \PHPUnit_Framework_TestCase
         // the latest code.
         $this->composer('config', 'repositories.dev', 'path', $this->projectRoot);
         
-        $this->composer('install');
+        $output = $this->composer('install');
+
+        // Check for deprecation notices.
+        $this->assertDeprecationNotice($output);
 
         // Run additional composer commands.
         foreach ($commands as $command) {
@@ -122,5 +125,16 @@ class FixturesTest extends \PHPUnit_Framework_TestCase
         }
 
         return $output;
+    }
+
+    /**
+     * Check lines for not having any deprecation notice.
+     * @param string[] $lines
+     */
+    protected function assertDeprecationNotice($lines)
+    {
+        foreach ($lines as $line) {
+            $this->assertNotContains('Deprecation Notice:', $line);
+        }
     }
 }
