@@ -22,10 +22,10 @@ For configuring the paths you need to set `preserve-paths` within the `extra` of
 {
     "extra": {
         "preserve-paths": [
-          "htdocs/sites/all/modules/contrib",
-          "htdocs/sites/all/themes/contrib",
-          "htdocs/sites/all/libraries",
-          "htdocs/sites/all/drush"
+          "web/sites/all/modules/contrib",
+          "web/sites/all/themes/contrib",
+          "web/sites/all/libraries",
+          "web/sites/all/drush"
         ]
       }
 }
@@ -33,39 +33,41 @@ For configuring the paths you need to set `preserve-paths` within the `extra` of
 
 ## Example
 
-An example composer.json using [davidbarratt/custom-installer](https://packagist.org/packages/davidbarratt/custom-installer):
+An example composer.json using [composer/installers](https://packagist.org/packages/composer/installers):
 
 ```json
 {
   "repositories": [
     {
       "type": "composer",
-      "url": "https://packagist.drupal-composer.org/"
+      "url": "https://packages.drupal.org/7"
     }
   ],
   "require": {
-    "davidbarratt/custom-installer": "dev-master",
+    "composer/installers": "^1.2",
     "derhasi/composer-preserve-paths": "0.1.*",
-    "drupal/views": "7.*",
+    "drupal/views": "3.*",
     "drupal/drupal": "7.*"
   },
   "config": {
     "vendor-dir": "vendor"
   },
   "extra": {
-    "custom-installer": {
-      "drupal-module": "htdocs/sites/all/modules/contrib/{$name}/",
-      "drupal-theme": "htdocs/sites/all/themes/contrib/{$name}/",
-      "drupal-library": "htdocs/sites/all/libraries/{$name}/",
-      "drupal-drush": "htdocs/sites/all/drush/{$name}/",
-      "drupal-profile": "htdocs/profiles/{$name}/",
-      "drupal-core": "htdocs/"
+    "installer-paths": {
+      "web/": ["type:drupal-core"],
+      "web/sites/all/modules/contrib/{$name}/": ["type:drupal-module"],
+      "web/sites/all/themes/contrib/{$name}/": ["type:drupal-theme"],
+      "web/sites/all/libraries/{$name}/": ["type:drupal-library"],
+      "web/sites/all/drush/{$name}/": ["type:drupal-drush"],
+      "web/profiles/{$name}/": ["type:drupal-profile"]
     },
     "preserve-paths": [
-      "htdocs/sites/all/modules/contrib",
-      "htdocs/sites/all/themes/contrib",
-      "htdocs/sites/all/libraries",
-      "htdocs/sites/all/drush"
+      "web/sites/all/modules/contrib",
+      "web/sites/all/themes/contrib",
+      "web/sites/all/libraries",
+      "web/sites/all/drush",
+      "web/sites/default/settings.php",
+      "web/sites/default/files"
     ]
   }
 }
