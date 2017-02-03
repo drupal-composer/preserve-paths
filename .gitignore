@@ -16,3 +16,7 @@ nbproject
 # Tools
 .svn
 .sass-cache
+
+# Composer files
+/composer.lock
+/vendor/
