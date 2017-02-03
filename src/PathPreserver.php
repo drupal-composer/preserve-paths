@@ -159,12 +159,68 @@ class PathPreserver
     }
 
   /**
-   * Prepares source paths for backup.
+   * Check if file really exists.
    *
-   * @param $paths
+   * As php can only determine, whether a file or folder exists when the parent
+   * directory is executable, we need to provide a workaround.
    *
-   * @see PathPreserver::restorePathPermissions()
+   * @param string $path
+   *   The path as in file_exists()
+   *
+   * @return bool
+   *   Returns TRUE if file exists, like in file_exists(),
+   *   but without restriction.
+   *
+   * @see file_exists()
    */
+    public static function fileExists($path)
+    {
+
+      // Get all parent directories.
+        $folders = array();
+        $resetPerms = array();
+        $folder = $path;
+        while ($folder = dirname($folder)) {
+            if ($folder === '.' || $folder === '/' || preg_match("/^.:\\\\$/", $folder)) {
+                break;
+            } elseif ($folder === '') {
+                continue;
+            }
+            $folders[] = $folder;
+        }
+
+        foreach (array_reverse($folders) as $currentFolder) {
+            // In the case a parent folder does not exist, the file cannot exist.
+            if (!is_dir($currentFolder)) {
+                $return = false;
+                break;
+            } // In the case the folder is really a folder, but not executable, we need
+            // to change that, so we can check if the file really exists.
+            elseif (!is_executable($currentFolder)) {
+                $resetPerms[$currentFolder] = fileperms($currentFolder);
+                chmod($currentFolder, 0755);
+            }
+        }
+
+        if (!isset($return)) {
+            $return = file_exists($path);
+        }
+
+        // Reset permissions in reverse order.
+        foreach (array_reverse($resetPerms, true) as $folder => $mode) {
+            chmod($folder, $mode);
+        }
+
+        return $return;
+    }
+
+    /**
+     * Prepares source paths for backup.
+     *
+     * @param $paths
+     *
+     * @see PathPreserver::restorePathPermissions()
+     */
     protected function preparePathPermissions($paths)
     {
         foreach ($paths as $path) {
@@ -212,61 +268,5 @@ class PathPreserver
         foreach ($this->filepermissions as $path => $perm) {
             chmod($path, $perm);
         }
-    }
-
-  /**
-   * Check if file really exists.
-   *
-   * As php can only determine, whether a file or folder exists when the parent
-   * directory is executable, we need to provide a workaround.
-   *
-   * @param string $path
-   *   The path as in file_exists()
-   *
-   * @return bool
-   *   Returns TRUE if file exists, like in file_exists(),
-   *   but without restriction.
-   *
-   * @see file_exists()
-   */
-    public static function fileExists($path)
-    {
-
-        // Get all parent directories.
-        $folders = array();
-        $resetPerms = array();
-        $folder = $path;
-        while ($folder = dirname($folder)) {
-            if ($folder === '.' || $folder === '/' || preg_match("/^.:\\\\$/", $folder)) {
-                break;
-            } elseif ($folder === '') {
-                continue;
-            }
-            $folders[] = $folder;
-        }
-
-        foreach (array_reverse($folders) as $currentFolder) {
-            // In the case a parent folder does not exist, the file cannot exist.
-            if (!is_dir($currentFolder)) {
-                $return = false;
-                break;
-            } // In the case the folder is really a folder, but not executable, we need
-            // to change that, so we can check if the file really exists.
-            elseif (!is_executable($currentFolder)) {
-                $resetPerms[$currentFolder] = fileperms($currentFolder);
-                chmod($currentFolder, 0755);
-            }
-        }
-
-        if (!isset($return)) {
-            $return = file_exists($path);
-        }
-
-        // Reset permissions in reverse order.
-        foreach (array_reverse($resetPerms, true) as $folder => $mode) {
-            chmod($folder, $mode);
-        }
-
-        return $return;
     }
 }
