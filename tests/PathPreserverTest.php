@@ -13,16 +13,6 @@ use derhasi\tempdirectory\TempDirectory;
 class PathPreserverTest extends \PHPUnit_Framework_TestCase {
 
   /**
-   * @var \derhasi\tempdirectory\TempDirectory
-   */
-  private $workingDirectory;
-
-  /**
-   * @var \derhasi\tempdirectory\TempDirectory
-   */
-  private $cacheDirectory;
-
-  /**
    * set up test environmemt
    */
   public function setUp() {
