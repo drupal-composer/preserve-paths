@@ -1,5 +1,10 @@
 # Composer preserve paths
 
+[![Build Status](https://travis-ci.org/deminy/composer-preserve-paths.svg?branch=master)](https://travis-ci.org/deminy/composer-preserve-paths)
+[![HHVM Status](http://hhvm.h4cc.de/badge/deminy/composer-preserve-paths.svg)](http://hhvm.h4cc.de/package/deminy/composer-preserve-paths)
+[![Latest Unstable Version](https://poser.pugx.org/deminy/composer-preserve-paths/v/unstable.svg)](https://packagist.org/packages/deminy/composer-preserve-paths)
+[![License](https://poser.pugx.org/deminy/composer-preserve-paths/license.svg)](https://packagist.org/packages/deminy/composer-preserve-paths)
+
 Composer plugin for preserving paths while installing, updating or uninstalling packages.
 
 This way you can:
