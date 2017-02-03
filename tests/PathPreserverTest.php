@@ -38,12 +38,12 @@ class PathPreserverTest extends \PHPUnit_Framework_TestCase
 
         // We simulate creation of
         $installPaths = array(
-        $workingDirectory->getRoot()
+            $workingDirectory->getRoot(),
         );
 
         $preservePaths = array(
-        $folder1,
-        $file1,
+            $folder1,
+            $file1,
         );
 
         $preserver = new PathPreserver($installPaths, $preservePaths, $cacheDirectory->getRoot(), $this->fs, $this->io);
@@ -126,12 +126,12 @@ class PathPreserverTest extends \PHPUnit_Framework_TestCase
         $this->assertFileExists($file2, 'File 2 created.');
 
         $installPaths = array(
-        $folder1
+            $folder1,
         );
         $preservePaths = array(
-        $subfolder1,
-        $file1,
-        $file2,
+            $subfolder1,
+            $file1,
+            $file2,
         );
 
         $preserver = new PathPreserver($installPaths, $preservePaths, $cacheDirectory->getRoot(), $this->fs, $this->io);
