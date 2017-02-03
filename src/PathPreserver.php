@@ -76,8 +76,13 @@ class PathPreserver
         FileSystem $filesystem,
         IOInterface $io
     ) {
+        $allPreservePaths = array();
+        foreach (array_unique($preservePaths) as $path) {
+            $allPreservePaths = array_merge($allPreservePaths, glob($path));
+        }
+        $this->preservePaths = array_unique($allPreservePaths);
+
         $this->installPaths  = array_unique($installPaths);
-        $this->preservePaths = array_unique($preservePaths);
         $this->cacheDir      = $cacheDir;
         $this->filesystem    = $filesystem;
         $this->io            = $io;

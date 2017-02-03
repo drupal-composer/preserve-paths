@@ -26,6 +26,11 @@
       "deminy\\Composer\\": "src/"
     }
   },
+  "autoload-dev": {
+    "psr-4": {
+      "deminy\\Composer\\Tests\\": "tests/"
+    }
+  },
   "extra": {
     "class": "deminy\\Composer\\Plugin"
   }

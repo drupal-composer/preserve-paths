@@ -9,10 +9,11 @@ This way you can:
 [composer/installers](https://packagist.org/packages/composer/installers) or
 [davidbarratt/custom-installer](https://packagist.org/packages/davidbarratt/custom-installer))
 
+This plugin was originally developed by [Johannes Haseitl](https://github.com/derhasi/composer-preserve-paths). I updated it to allow wildcard pattern matching when defining preserved paths, which is necessary if you have many sites installed with same Drupal installation (i.e., you have many directories like _example.com_, _example.net_, _example.org_, etc under folder _sites/_ of your Drupal installation).
 
 ## Installation
 
-Simply install the plugin with composer: `composer require derhasi/composer-preserve-paths`
+Simply install the plugin with composer: `composer require deminy/composer-preserve-paths`
 
 ## Configuration
 
@@ -45,7 +46,7 @@ An example composer.json using [davidbarratt/custom-installer](https://packagist
   ],
   "require": {
     "davidbarratt/custom-installer": "dev-master",
-    "derhasi/composer-preserve-paths": "0.1.*",
+    "deminy/composer-preserve-paths": "dev-master",
     "drupal/views": "7.*",
     "drupal/drupal": "7.*"
   },
@@ -54,21 +55,22 @@ An example composer.json using [davidbarratt/custom-installer](https://packagist
   },
   "extra": {
     "custom-installer": {
-      "drupal-module": "htdocs/sites/all/modules/contrib/{$name}/",
-      "drupal-theme": "htdocs/sites/all/themes/contrib/{$name}/",
+      "drupal-module":  "htdocs/sites/all/modules/contrib/{$name}/",
+      "drupal-theme":   "htdocs/sites/all/themes/contrib/{$name}/",
       "drupal-library": "htdocs/sites/all/libraries/{$name}/",
-      "drupal-drush": "htdocs/sites/all/drush/{$name}/",
+      "drupal-drush":   "htdocs/sites/all/drush/{$name}/",
       "drupal-profile": "htdocs/profiles/{$name}/",
-      "drupal-core": "htdocs/"
+      "drupal-core":    "htdocs/"
     },
     "preserve-paths": [
       "htdocs/sites/all/modules/contrib",
       "htdocs/sites/all/themes/contrib",
       "htdocs/sites/all/libraries",
-      "htdocs/sites/all/drush"
+      "htdocs/sites/all/drush",
+      "htdocs/sites/*.com",
+      "htdocs/sites/*.net",
+      "htdocs/sites/*.org"
     ]
   }
 }
 ```
-
-

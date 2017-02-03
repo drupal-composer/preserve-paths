@@ -1,6 +1,6 @@
 <?php
 
-namespace derhasi\Composer\Tests;
+namespace deminy\Composer\Tests;
 
 use Composer\IO\IOInterface;
 use Composer\Util\Filesystem;
@@ -48,9 +48,24 @@ class PathPreserverTest extends PHPUnit_Framework_TestCase
      */
     public function testPreserveAndRollback()
     {
-        // Create directory to test.
-        $folder1 = $this->workingDirectory->getPath('folder1');
-        mkdir($folder1);
+        $existingFolders = array_fill_keys(
+            array(
+                'existingFolderTypeA1', // An existing folder that matches wildcard pattern and should be preserved
+                'existingFolderTypeA2', // An existing folder that matches wildcard pattern and should be preserved
+                'existingFolderTypeB3', // An existing folder that not match wildcard pattern and should not be removed
+            ),
+            null
+        );
+        foreach ($existingFolders as $folder => $null) {
+            $existingFolders[$folder] = $this->workingDirectory->getPath($folder);
+            mkdir($existingFolders[$folder]);
+        }
+        $nonExistingFolders = array_map(
+            function ($folder) {
+                return $this->workingDirectory->getPath($folder);
+            },
+            array('nonExistingFolder1', 'nonExistingFolder2', 'nonExistingFolder3')
+        );
         $file1 = $this->workingDirectory->getPath('file1.txt');
         file_put_contents($file1, 'Test content');
 
@@ -58,19 +73,40 @@ class PathPreserverTest extends PHPUnit_Framework_TestCase
             array(
                 $this->workingDirectory->getRoot()
             ),
-            array($folder1, $file1),
+            array(
+                $this->workingDirectory->getRoot() . DIRECTORY_SEPARATOR . 'existingFolderTypeA*',
+                $this->workingDirectory->getRoot() . DIRECTORY_SEPARATOR . 'nonExistingFolder1',
+                $this->workingDirectory->getRoot() . DIRECTORY_SEPARATOR . 'file1.txt',
+            ),
             $this->cacheDirectory->getRoot(),
             $this->fs,
             $this->io
         );
-        $this->assertIsDir($folder1, 'Folder created.');
+
+        $this->assertIsDir($existingFolders['existingFolderTypeA1'], 'Folder created.');
+        $this->assertIsDir($existingFolders['existingFolderTypeA2'], 'Folder created.');
+        $this->assertIsDir($existingFolders['existingFolderTypeB3'], 'Folder created.');
+        foreach ($nonExistingFolders as $folder) {
+            $this->assertFileNotExists($folder, 'Folder not exist.');
+        }
         $this->assertFileExists($file1, 'File created.');
+
         $preserver->preserve();
-        $this->assertFileNotExists($folder1, 'Folder removed for backup.');
+        $this->assertFileNotExists($existingFolders['existingFolderTypeA1'], 'Folder removed for backup.');
+        $this->assertFileNotExists($existingFolders['existingFolderTypeA2'], 'Folder removed for backup.');
+        $this->assertIsDir($existingFolders['existingFolderTypeB3'], 'Folder still there.');
+        foreach ($nonExistingFolders as $folder) {
+            $this->assertFileNotExists($folder, 'Folder not exist.');
+        }
         $this->assertFileNotExists($file1, 'File was removed for backup.');
 
         $preserver->rollback();
-        $this->assertIsDir($folder1, 'Folder recreated.');
+        $this->assertIsDir($existingFolders['existingFolderTypeA1'], 'Folder created.');
+        $this->assertIsDir($existingFolders['existingFolderTypeA2'], 'Folder created.');
+        $this->assertIsDir($existingFolders['existingFolderTypeB3'], 'Folder still there.');
+        foreach ($nonExistingFolders as $folder) {
+            $this->assertFileNotExists($folder, 'Folder not exist.');
+        }
         $this->assertFileExists($file1, 'File recreated.');
     }
 
