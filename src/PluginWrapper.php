@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains deminy\Composer\Plugin.
+ * Contains derhasi\Composer\Plugin.
  */
 
-namespace deminy\Composer;
+namespace derhasi\Composer;
 
 use Composer\Composer;
 use Composer\DependencyResolver\Operation\InstallOperation;
