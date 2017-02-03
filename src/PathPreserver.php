@@ -88,7 +88,7 @@ class PathPreserver
             $relevantPaths = array();
             foreach ($this->preservePaths as $path) {
                 $normalizedPath = $this->filesystem->normalizePath($path);
-                if (static::file_exists($path) && strpos($normalizedPath, $installPathNormalized) === 0) {
+                if (static::fileExists($path) && strpos($normalizedPath, $installPathNormalized) === 0) {
                     $relevantPaths[] = $normalizedPath;
                 }
             }
