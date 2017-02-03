@@ -10,165 +10,163 @@ use Composer\Composer;
 use Composer\Config;
 use derhasi\tempdirectory\TempDirectory;
 
-class PathPreserverTest extends \PHPUnit_Framework_TestCase {
+/**
+ * Test for path preserver functionality.
+ */
+class PathPreserverTest extends \PHPUnit_Framework_TestCase
+{
 
-  /**
-   * @var \derhasi\tempdirectory\TempDirectory
-   */
-  private $workingDirectory;
+    /**
+     * set up test environmemt
+     */
+    public function setUp()
+    {
+        $this->fs = new Filesystem();
+        $this->io = $this->getMock('Composer\IO\IOInterface');
+    }
 
-  /**
-   * @var \derhasi\tempdirectory\TempDirectory
-   */
-  private $cacheDirectory;
+    /**
+     * Tests that the directory is created
+     */
+    public function testPreserveAndRollback()
+    {
+        $workingDirectory = new TempDirectory(__METHOD__);
+        $cacheDirectory = new TempDirectory(__METHOD__.'-cache');
 
-  /**
-   * set up test environmemt
-   */
-  public function setUp() {
-    $this->fs = new Filesystem();
-    $this->io = $this->getMock('Composer\IO\IOInterface');
-  }
+        // Create directory to test.
+        $folder1 = $workingDirectory->getPath('folder1');
+        mkdir($folder1);
+        $file1 = $workingDirectory->getPath('file1.txt');
+        file_put_contents($file1, 'Test content');
 
-  /**
-   * Tests that the directory is created
-   */
-  public function testPreserveAndRollback() {
-    $workingDirectory = new TempDirectory(__METHOD__);
-    $cacheDirectory = new TempDirectory(__METHOD__ . '-cache');
+        // We simulate creation of
+        $installPaths = array(
+            $workingDirectory->getRoot(),
+        );
 
-    // Create directory to test.
-    $folder1 = $workingDirectory->getPath('folder1');
-    mkdir($folder1);
-    $file1 = $workingDirectory->getPath('file1.txt');
-    file_put_contents($file1, 'Test content');
+        $preservePaths = array(
+            $folder1,
+            $file1,
+        );
 
-    // We simulate creation of
-    $installPaths = array(
-      $workingDirectory->getRoot()
-    );
+        $preserver = new PathPreserver($installPaths, $preservePaths, $cacheDirectory->getRoot(), $this->fs, $this->io);
+        $this->assertIsDir($folder1, 'Folder created.');
+        $this->assertFileExists($file1, 'File created.');
+        $preserver->preserve();
+        $this->assertFileNotExists($folder1, 'Folder removed for backup.');
+        $this->assertFileNotExists($file1, 'File was removed for backup.');
 
-    $preservePaths = array(
-      $folder1,
-      $file1,
-    );
+        $preserver->rollback();
+        $this->assertIsDir($folder1, 'Folder recreated.');
+        $this->assertFileExists($file1, 'File recreated.');
+    }
 
-    $preserver = new PathPreserver($installPaths, $preservePaths, $cacheDirectory->getRoot(), $this->fs, $this->io);
-    $this->assertIsDir($folder1, 'Folder created.');
-    $this->assertFileExists($file1, 'File created.');
-    $preserver->preserve();
-    $this->assertFileNotExists($folder1, 'Folder removed for backup.');
-    $this->assertFileNotExists($file1, 'File was removed for backup.');
+    /**
+     * Tests file_exists() restrictions on non executable directories.
+     */
+    public function testFileExists()
+    {
+        $workingDirectory = new TempDirectory(__METHOD__);
 
-    $preserver->rollback();
-    $this->assertIsDir($folder1, 'Folder recreated.');
-    $this->assertFileExists($file1, 'File recreated.');
-  }
+        $folder1 = $workingDirectory->getPath('folder1');
+        $subfolder1 = $workingDirectory->getPath('folder1/subfolder1');
+        $file1 = $workingDirectory->getPath('folder1/subfolder1/file1.txt');
+        $file2 = $workingDirectory->getPath('folder1/file2.txt');
 
-  /**
-   * Tests file_exists() restrictions on non executable directories.
-   */
-  public function testFileExists() {
-    $workingDirectory = new TempDirectory(__METHOD__);
+        mkdir($folder1);
+        mkdir($subfolder1);
+        file_put_contents($file1, '');
+        file_put_contents($file2, '');
 
-    $folder1 = $workingDirectory->getPath('folder1');
-    $subfolder1 = $workingDirectory->getPath('folder1/subfolder1');
-    $file1 = $workingDirectory->getPath('folder1/subfolder1/file1.txt');
-    $file2 = $workingDirectory->getPath('folder1/file2.txt');
+        $this->assertIsDir($folder1);
+        $this->assertIsDir($subfolder1);
+        $this->assertFileExists($file1);
+        $this->assertFileExists($file2);
 
-    mkdir($folder1);
-    mkdir($subfolder1);
-    file_put_contents($file1, '');
-    file_put_contents($file2, '');
+        // After chaning the file mode of the parent directory, no containing files
+        // or folders can be found anymore.
+        chmod($folder1, 0400);
 
-    $this->assertIsDir($folder1);
-    $this->assertIsDir($subfolder1);
-    $this->assertFileExists($file1);
-    $this->assertFileExists($file2);
+        $this->assertTrue(file_exists($folder1), 'Folder is still present.');
+        $this->assertFalse(file_exists($subfolder1), 'File exists retures FALSE for subfolder');
+        $this->assertFalse(file_exists($file1), 'File exists retures FALSE for subfolder');
+        $this->assertFalse(file_exists($file2), 'File exists retures FALSE for subfolder');
+    }
 
-    // After chaning the file mode of the parent directory, no containing files
-    // or folders can be found anymore.
-    chmod($folder1, 0400);
+    /**
+     * Tests preservation and rollback on tricky path permissions.
+     *
+     * @depends testPreserveAndRollback
+     */
+    public function testFileModes()
+    {
+        $workingDirectory = new TempDirectory(__METHOD__);
+        $cacheDirectory = new TempDirectory(__METHOD__.'-cache');
 
-    $this->assertTrue(file_exists($folder1), 'Folder is still present.');
-    $this->assertFalse(file_exists($subfolder1), 'File exists retures FALSE for subfolder');
-    $this->assertFalse(file_exists($file1), 'File exists retures FALSE for subfolder');
-    $this->assertFalse(file_exists($file2), 'File exists retures FALSE for subfolder');
-  }
+        // Create directory to test.
+        $folder1 = $workingDirectory->getPath('folder1');
+        mkdir($folder1);
 
-  /**
-   * Tests preservation and rollback on tricky path permissions.
-   *
-   * @depends testPreserveAndRollback
-   */
-  public function testFileModes() {
-    $workingDirectory = new TempDirectory(__METHOD__);
-    $cacheDirectory = new TempDirectory(__METHOD__ . '-cache');
+        $subfolder1 = $workingDirectory->getPath('folder1/subfolder1');
+        mkdir($subfolder1);
 
-    // Create directory to test.
-    $folder1 = $workingDirectory->getPath('folder1');
-    mkdir($folder1);
+        $file1 = $workingDirectory->getPath('folder1/file1.txt');
+        file_put_contents($file1, 'Test content');
+        $file2 = $workingDirectory->getPath('folder1/file2.txt');
+        file_put_contents($file2, 'Test content 2');
 
-    $subfolder1 = $workingDirectory->getPath('folder1/subfolder1');
-    mkdir($subfolder1);
+        // After changing some permissions we test if the given paths can be
+        // restored.
+        chmod($file2, 0400);
+        // For checking if file exists, we need to set the permission for the folder
+        // differently
+        // @see http://stackoverflow.com/questions/11834629/glob-lists-files-file-exists-says-they-dont-exist
+        chmod($folder1, 0500);
 
-    $file1 = $workingDirectory->getPath('folder1/file1.txt');
-    file_put_contents($file1, 'Test content');
-    $file2 = $workingDirectory->getPath('folder1/file2.txt');
-    file_put_contents($file2, 'Test content 2');
+        $this->assertIsDir($folder1, 'Folder created.');
+        $this->assertIsDir($subfolder1, 'Subfolder 1 created.');
+        $this->assertFileExists($file1, 'File 1 created.');
+        $this->assertFileExists($file2, 'File 2 created.');
 
-    // After changing some permissions we test if the given paths can be
-    // restored.
-    chmod($file2, 0400);
-    // For checking if file exists, we need to set the permission for the folder
-    // differently
-    // @see http://stackoverflow.com/questions/11834629/glob-lists-files-file-exists-says-they-dont-exist
-    chmod($folder1, 0500);
+        $installPaths = array(
+            $folder1,
+        );
+        $preservePaths = array(
+            $subfolder1,
+            $file1,
+            $file2,
+        );
 
-    $this->assertIsDir($folder1, 'Folder created.');
-    $this->assertIsDir($subfolder1, 'Subfolder 1 created.');
-    $this->assertFileExists($file1, 'File 1 created.');
-    $this->assertFileExists($file2, 'File 2 created.');
+        $preserver = new PathPreserver($installPaths, $preservePaths, $cacheDirectory->getRoot(), $this->fs, $this->io);
 
-    $installPaths = array(
-      $folder1
-    );
-    $preservePaths = array(
-      $subfolder1,
-      $file1,
-      $file2,
-    );
+        // We check if preservation works even with restrictive permissions.
+        chmod($folder1, 0400);
+        $preserver->preserve();
+        chmod($folder1, 0500);
 
-    $preserver = new PathPreserver($installPaths, $preservePaths, $cacheDirectory->getRoot(), $this->fs, $this->io);
+        $this->assertIsDir($folder1, 'Folder not removed for backup.');
+        $this->assertFileNotExists($subfolder1, 'Subfolder removed for backup.');
+        $this->assertFileNotExists($file1, 'File 1 was removed for backup.');
+        $this->assertFileNotExists($file2, 'File 2 was removed for backup.');
 
-    // We check if preservation works even with restrictive permissions.
-    chmod($folder1, 0400);
-    $preserver->preserve();
-    chmod($folder1, 0500);
+        // We check if rollback works even with restrictive permissions.
+        chmod($folder1, 0400);
+        $preserver->rollback();
+        chmod($folder1, 0500);
 
-    $this->assertIsDir($folder1, 'Folder not removed for backup.');
-    $this->assertFileNotExists($subfolder1, 'Subfolder removed for backup.');
-    $this->assertFileNotExists($file1, 'File 1 was removed for backup.');
-    $this->assertFileNotExists($file2, 'File 2 was removed for backup.');
+        $this->assertFileExists($subfolder1, 'Subfolder 1 recreated.');
+        $this->assertFileExists($file1, 'File 1 recreated.');
+        $this->assertFileExists($file2, 'File 2 recreated.');
+    }
 
-    // We check if rollback works even with restrictive permissions.
-    chmod($folder1, 0400);
-    $preserver->rollback();
-    chmod($folder1, 0500);
-
-    $this->assertFileExists($subfolder1, 'Subfolder 1 recreated.');
-    $this->assertFileExists($file1, 'File 1 recreated.');
-    $this->assertFileExists($file2, 'File 2 recreated.');
-  }
-
-  /**
-   * Custom assertion for existing directory.
-   *
-   * @param $path
-   * @param string $message
-   */
-  protected function assertIsDir($path, $message = '') {
-    $this->assertTrue(file_exists($path) && is_dir($path), $message);
-  }
-
+    /**
+     * Custom assertion for existing directory.
+     *
+     * @param $path
+     * @param string $message
+     */
+    protected function assertIsDir($path, $message = '')
+    {
+        $this->assertTrue(file_exists($path) && is_dir($path), $message);
+    }
 }

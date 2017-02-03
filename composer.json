@@ -24,9 +24,11 @@
     "composer-plugin-api": "^1.0"
   },
   "require-dev": {
-    "composer/composer": "1.0.*@dev",
-    "phpunit/phpunit": "4.4.*",
-    "derhasi/tempdirectory": "0.1.*"
+    "composer/composer": "1.*",
+    "phpunit/phpunit": "4.*",
+    "derhasi/tempdirectory": "0.1.*",
+    "squizlabs/php_codesniffer": "2.*",
+    "escapestudios/symfony2-coding-standard": "2.*"
   },
   "autoload": {
     "psr-4": {
