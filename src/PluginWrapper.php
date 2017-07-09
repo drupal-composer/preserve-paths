@@ -170,7 +170,7 @@ class PluginWrapper
         $extra = $this->composer->getPackage()->getExtra();
 
         if (!isset($extra['preserve-paths'])) {
-            $paths = $extra['preserve-paths'];
+            $paths = array();
         } elseif (!is_array($extra['preserve-paths']) && !is_object($extra['preserve-paths'])) {
             $paths = array($extra['preserve-paths']);
         } else {
