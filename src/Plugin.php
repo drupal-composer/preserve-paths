@@ -8,15 +8,11 @@
 namespace DrupalComposer\PreservePaths;
 
 use Composer\Composer;
-use Composer\DependencyResolver\Operation\InstallOperation;
-use Composer\DependencyResolver\Operation\UninstallOperation;
-use Composer\DependencyResolver\Operation\UpdateOperation;
 use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\IO\IOInterface;
 use Composer\Plugin\PluginInterface;
 use Composer\Installer\PackageEvent;
 use Composer\Script\ScriptEvents;
-use Composer\Util\Filesystem;
 
 /**
  * Class Plugin.

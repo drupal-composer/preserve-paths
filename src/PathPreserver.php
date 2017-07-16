@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * Contains \DrupalComposer\PreservePaths\PathPreserver
  */
 
