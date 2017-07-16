@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains derhasi\Composer\Plugin.
+ * Contains DrupalComposer\PreservePaths\Plugin.
  */
 
-namespace derhasi\Composer;
+namespace DrupalComposer\PreservePaths;
 
 use Composer\Composer;
 use Composer\DependencyResolver\Operation\InstallOperation;
@@ -40,7 +40,7 @@ class PluginWrapper
     protected $filesystem;
 
     /**
-     * @var \derhasi\Composer\PathPreserver[string]
+     * @var \DrupalComposer\PreservePaths\PathPreserver[string]
      */
     protected $preservers;
 

@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains derhasi\Composer\Plugin.
+ * Contains DrupalComposer\PreservePaths\Plugin.
  */
 
-namespace derhasi\Composer;
+namespace DrupalComposer\PreservePaths;
 
 use Composer\Composer;
 use Composer\DependencyResolver\Operation\InstallOperation;
@@ -25,7 +25,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
 {
 
     /**
-     * @var \derhasi\Composer\PluginWrapper
+     * @var \DrupalComposer\PreservePaths\PluginWrapper
      */
     protected $wrapper;
 

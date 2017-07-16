@@ -1,8 +1,8 @@
 <?php
 
-namespace derhasi\Composer\Tests;
+namespace DrupalComposer\PreservePaths\Tests;
 
-use derhasi\Composer\PathPreserver;
+use DrupalComposer\PreservePaths\PathPreserver;
 use Composer\Util\Filesystem;
 use Composer\Package\Package;
 use Composer\Package\RootPackage;

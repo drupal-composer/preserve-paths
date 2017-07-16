@@ -1,5 +1,5 @@
 {
-  "name": "derhasi/composer-preserve-paths",
+  "name": "drupal-composer/preserve-paths",
   "description": "Composer plugin for preserving custom paths and supporting nested packages",
   "type": "composer-plugin",
   "keywords": [
@@ -8,7 +8,7 @@
     "custom path",
     "nested package"
   ],
-  "homepage": "https://github.com/derhasi/composer-preserve-paths",
+  "homepage": "https://github.com/drupal-composer/preserve-paths",
   "license": "GPL-2.0+",
   "authors": [
     {
@@ -18,7 +18,7 @@
     }
   ],
   "support": {
-    "issues": "https://github.com/derhasi/composer-preserve-paths/issues"
+    "issues": "https://github.com/drupal-composer/preserve-paths/issues"
   },
   "require": {
     "composer-plugin-api": "^1.0"
@@ -32,10 +32,10 @@
   },
   "autoload": {
     "psr-4": {
-      "derhasi\\Composer\\": "src/"
+      "DrupalComposer\\PreservePaths\\": "src/"
     }
   },
   "extra": {
-    "class": "derhasi\\Composer\\Plugin"
+    "class": "DrupalComposer\\PreservePaths\\Plugin"
   }
 }

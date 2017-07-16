@@ -7,7 +7,7 @@
   ],
   "require": {
     "composer/installers": "^1.2",
-    "derhasi/composer-preserve-paths": "@dev",
+    "drupal-composer/preserve-paths": "@dev",
     "drupal/views": "3.*",
     "drupal/drupal": "7.52"
   },

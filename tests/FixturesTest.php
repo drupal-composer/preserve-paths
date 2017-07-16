@@ -1,6 +1,6 @@
 <?php
 
-namespace derhasi\Composer\Tests;
+namespace DrupalComposer\PreservePaths\Tests;
 
 use derhasi\tempdirectory\TempDirectory;
 

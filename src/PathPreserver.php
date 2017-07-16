@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Contains \derhasi\Composer\PathPreserver
+ * Contains \DrupalComposer\PreservePaths\PathPreserver
  */
 
-namespace derhasi\Composer;
+namespace DrupalComposer\PreservePaths;
 
 /**
  * Class PathPreserver

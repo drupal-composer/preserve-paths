@@ -12,7 +12,7 @@ This way you can:
 
 ## Installation
 
-Simply install the plugin with composer: `composer require derhasi/composer-preserve-paths`
+Simply install the plugin with composer: `composer require drupal-composer/preserve-paths`
 
 ## Configuration
 
@@ -45,7 +45,7 @@ An example composer.json using [composer/installers](https://packagist.org/packa
   ],
   "require": {
     "composer/installers": "^1.2",
-    "derhasi/composer-preserve-paths": "0.1.*",
+    "drupal-composer/preserve-paths": "0.1.*",
     "drupal/views": "3.*",
     "drupal/drupal": "7.*"
   },
