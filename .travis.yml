@@ -1,8 +1,13 @@
 language: php
+dist: trusty
 php:
   - "5.5"
   - "5.4"
   - "5.3"
+matrix:
+  include:
+    - php: "5.3"
+      dist: precise
 install:
   - composer install
 script:
