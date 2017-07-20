@@ -99,7 +99,7 @@ class PathPreserver
                 continue;
             }
 
-            $unique = $installPath.' '.time();
+            $unique = $installPath.' '.uniqid('', true);
             $cacheRoot = $this->filesystem->normalizePath($this->cacheDir.'/preserve-paths/'.sha1($unique));
             $this->filesystem->ensureDirectoryExists($cacheRoot);
 
