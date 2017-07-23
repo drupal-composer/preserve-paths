@@ -16,7 +16,7 @@ Simply install the plugin with composer: `composer require drupal-composer/prese
 
 ## Configuration
 
-For configuring the paths you need to set `preserve-paths` within the `extra` of your root `composer.json`.
+For configuring the paths you need to set `preserve-paths` within the `extra` of your `composer.json`.
 
 ```json
 {
@@ -30,6 +30,24 @@ For configuring the paths you need to set `preserve-paths` within the `extra` of
       }
 }
 ```
+
+In case you need to set the `preserve-paths` option in a dependent package, you must also set `preserve-paths-as-dependency` in the `composer.json` of the dependency.
+
+```json
+{
+    "extra": {
+        "preserve-paths-as-dependency": true,
+        "preserve-paths": [
+          "web/sites/all/modules/contrib",
+          "web/sites/all/themes/contrib",
+          "web/sites/all/libraries",
+          "web/sites/all/drush"
+        ]
+      }
+}
+```
+
+You can disable this setting in your root `composer.json` by setting `preserve-paths-ignore-dependencies` to true.
 
 ## Example
 
