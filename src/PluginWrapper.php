@@ -64,7 +64,7 @@ class PluginWrapper
 
         $preserver = new PathPreserver(
             $paths,
-            $this->getPreservePaths(),
+            $this->getPreservePaths($packages),
             $this->composer->getConfig()->get('cache-dir'),
             $this->filesystem,
             $this->io
@@ -158,13 +158,46 @@ class PluginWrapper
     }
 
     /**
-     * Get preserve paths from root configuration.
+     * Get preserve paths.
+     *
+     * @param \Composer\Package\PackageInterface[] $packages
      *
      * @return string[]
      */
-    protected function getPreservePaths()
+    protected function getPreservePaths($packages)
     {
         $extra = $this->composer->getPackage()->getExtra();
+        $paths = array();
+
+        /*
+         * Root package allows that preserve paths from dependencies are also evaluated.
+         * Negative check as this feature is developed for situations where the root package
+         * can not be adjusted, but paths must be preserved.
+         */
+        if(!isset($extra['preserve-paths-ignore-dependencies']) || !$extra['preserve-paths-ignore-dependencies']) {
+            foreach ($packages as $package) {
+                $paths = array_merge($paths, $this->extractPathsFromExtra($package->getExtra(), false));
+            }
+        }
+
+        $paths = array_unique(array_merge($paths, $this->extractPathsFromExtra($extra)));
+
+        return $this->absolutePaths($paths);
+    }
+
+    /**
+     * Extract the paths from the extra data.
+     *
+     * @param array $extra
+     * @param boolean $root
+     *
+     * @return string[]
+     */
+    protected function extractPathsFromExtra($extra, $root = true) {
+        // Package does not explicitly allow to preserve paths if used as dependency.
+        if(!$root && (!isset($extra['preserve-as-from-dependency']) || $extra['preserve-paths-as-dependency'] != true)) {
+            return array();
+        }
 
         if (!isset($extra['preserve-paths'])) {
             $paths = array();
@@ -174,7 +207,7 @@ class PluginWrapper
             $paths = array_values((array) $extra['preserve-paths']);
         }
 
-        return $this->absolutePaths($paths);
+        return $paths;
     }
 
     /**
