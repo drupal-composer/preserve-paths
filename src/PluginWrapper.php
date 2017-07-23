@@ -174,7 +174,7 @@ class PluginWrapper
          * Negative check as this feature is developed for situations where the root package
          * can not be adjusted, but paths must be preserved.
          */
-        if(!isset($extra['preserve-paths-ignore-dependencies']) || !$extra['preserve-paths-ignore-dependencies']) {
+        if (!isset($extra['preserve-paths-ignore-dependencies']) || !$extra['preserve-paths-ignore-dependencies']) {
             foreach ($packages as $package) {
                 $paths = array_merge($paths, $this->extractPathsFromExtra($package->getExtra(), false));
             }
@@ -193,9 +193,10 @@ class PluginWrapper
      *
      * @return string[]
      */
-    protected function extractPathsFromExtra($extra, $root = true) {
+    protected function extractPathsFromExtra($extra, $root = true)
+    {
         // Package does not explicitly allow to preserve paths if used as dependency.
-        if(!$root && (!isset($extra['preserve-as-from-dependency']) || $extra['preserve-paths-as-dependency'] != true)) {
+        if (!$root && (!isset($extra['preserve-as-from-dependency']) || $extra['preserve-paths-as-dependency'] != true)) {
             return array();
         }
 
