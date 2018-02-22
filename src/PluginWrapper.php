@@ -196,7 +196,7 @@ class PluginWrapper
     protected function extractPathsFromExtra($extra, $root = true)
     {
         // Package does not explicitly allow to preserve paths if used as dependency.
-        if (!$root && (!isset($extra['preserve-as-from-dependency']) || $extra['preserve-paths-as-dependency'] != true)) {
+        if (!$root && (!isset($extra['preserve-paths-as-dependency']) || $extra['preserve-paths-as-dependency'] != true)) {
             return array();
         }
 
