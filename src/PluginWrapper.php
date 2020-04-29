@@ -85,7 +85,7 @@ class PluginWrapper
     {
         $packages = $this->getPackagesFromEvent($event);
         $key = $this->getUniqueNameFromPackages($packages);
-        if ($this->preservers[$key]) {
+        if (!empty($this->preservers[$key])) {
             $this->preservers[$key]->rollback();
             unset($this->preservers[$key]);
         }
