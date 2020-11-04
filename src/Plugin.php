@@ -38,14 +38,14 @@ class Plugin implements PluginInterface, EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        return array(
-        ScriptEvents::PRE_PACKAGE_INSTALL => 'prePackage',
-        ScriptEvents::POST_PACKAGE_INSTALL => 'postPackage',
-        ScriptEvents::PRE_PACKAGE_UPDATE => 'prePackage',
-        ScriptEvents::POST_PACKAGE_UPDATE => 'postPackage',
+      return [
+        ScriptEvents::PRE_INSTALL_CMD => 'prePackage',
+        ScriptEvents::POST_INSTALL_CMD => 'postPackage',
+        ScriptEvents::PRE_UPDATE_CMD => 'prePackage',
+        ScriptEvents::POST_UPDATE_CMD => 'postPackage',
         ScriptEvents::PRE_PACKAGE_UNINSTALL => 'prePackage',
         ScriptEvents::POST_PACKAGE_UNINSTALL => 'postPackage',
-        );
+      ];
     }
 
     /**
@@ -55,7 +55,6 @@ class Plugin implements PluginInterface, EventSubscriberInterface
      */
     public function prePackage(PackageEvent $event)
     {
-
         $this->wrapper->prePackage($event);
     }
 
