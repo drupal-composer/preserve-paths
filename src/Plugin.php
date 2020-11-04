@@ -12,6 +12,7 @@ use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\IO\IOInterface;
 use Composer\Plugin\PluginInterface;
 use Composer\Installer\PackageEvent;
+use Composer\Installer\PackageEvents;
 
 /**
  * Class Plugin.
@@ -38,12 +39,12 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     public static function getSubscribedEvents()
     {
       return [
-        PackageEvent::PRE_PACKAGE_INSTALL => 'prePackage',
-        PackageEvent::POST_PACKAGE_INSTALL => 'postPackage',
-        PackageEvent::PRE_PACKAGE_UPDATE => 'prePackage',
-        PackageEvent::POST_PACKAGE_UPDATE => 'postPackage',
-        PackageEvent::PRE_PACKAGE_UNINSTALL => 'prePackage',
-        PackageEvent::POST_PACKAGE_UNINSTALL => 'postPackage',
+        PackageEvents::PRE_PACKAGE_INSTALL => 'prePackage',
+        PackageEvents::POST_PACKAGE_INSTALL => 'postPackage',
+        PackageEvents::PRE_PACKAGE_UPDATE => 'prePackage',
+        PackageEvents::POST_PACKAGE_UPDATE => 'postPackage',
+        PackageEvents::PRE_PACKAGE_UNINSTALL => 'prePackage',
+        PackageEvents::POST_PACKAGE_UNINSTALL => 'postPackage',
       ];
     }
 
