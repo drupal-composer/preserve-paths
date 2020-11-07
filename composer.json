@@ -9,7 +9,7 @@
     "nested package"
   ],
   "homepage": "https://github.com/drupal-composer/preserve-paths",
-  "license": "GPL-2.0+",
+  "license": "GPL-2.0-or-later",
   "authors": [
     {
       "name": "Johannes Haseitl",
@@ -37,7 +37,5 @@
   },
   "extra": {
     "class": "DrupalComposer\\PreservePaths\\Plugin"
-  },
-  "minimum-stability": "dev",
-  "prefer-stable": true
+  }
 }
