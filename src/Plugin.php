@@ -38,14 +38,14 @@ class Plugin implements PluginInterface, EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-      return [
-        PackageEvents::PRE_PACKAGE_INSTALL => 'prePackage',
-        PackageEvents::POST_PACKAGE_INSTALL => 'postPackage',
-        PackageEvents::PRE_PACKAGE_UPDATE => 'prePackage',
-        PackageEvents::POST_PACKAGE_UPDATE => 'postPackage',
-        PackageEvents::PRE_PACKAGE_UNINSTALL => 'prePackage',
-        PackageEvents::POST_PACKAGE_UNINSTALL => 'postPackage',
-      ];
+        return array(
+            PackageEvents::PRE_PACKAGE_INSTALL => 'prePackage',
+            PackageEvents::POST_PACKAGE_INSTALL => 'postPackage',
+            PackageEvents::PRE_PACKAGE_UPDATE => 'prePackage',
+            PackageEvents::POST_PACKAGE_UPDATE => 'postPackage',
+            PackageEvents::PRE_PACKAGE_UNINSTALL => 'prePackage',
+            PackageEvents::POST_PACKAGE_UNINSTALL => 'postPackage',
+        );
     }
 
     /**
