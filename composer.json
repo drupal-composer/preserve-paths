@@ -9,7 +9,7 @@
     "nested package"
   ],
   "homepage": "https://github.com/drupal-composer/preserve-paths",
-  "license": "GPL-2.0+",
+  "license": "GPL-2.0-or-later",
   "authors": [
     {
       "name": "Johannes Haseitl",
@@ -21,10 +21,10 @@
     "issues": "https://github.com/drupal-composer/preserve-paths/issues"
   },
   "require": {
-    "composer-plugin-api": "^1.0"
+    "composer-plugin-api": "^1.0 || ^2.0"
   },
   "require-dev": {
-    "composer/composer": "1.*",
+    "composer/composer": "^2.0",
     "phpunit/phpunit": "4.*",
     "derhasi/tempdirectory": "0.1.*",
     "squizlabs/php_codesniffer": "2.*",
