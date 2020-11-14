@@ -3,11 +3,12 @@
 namespace DrupalComposer\PreservePaths\Tests;
 
 use derhasi\tempdirectory\TempDirectory;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for some examples.
  */
-class FixturesTest extends \PHPUnit_Framework_TestCase
+class FixturesTest extends TestCase
 {
 
     /**
@@ -28,7 +29,7 @@ class FixturesTest extends \PHPUnit_Framework_TestCase
     /**
      * Set up test.
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->projectRoot = realpath(__DIR__.'/..');
         $this->composerBin = realpath(__DIR__.'/../vendor/bin/composer');
@@ -57,7 +58,7 @@ class FixturesTest extends \PHPUnit_Framework_TestCase
         // Add this project as local development repository sow we work with
         // the latest code.
         $this->composer('config', 'repositories.dev', 'path', $this->projectRoot);
-        
+
         $output = $this->composer('install');
 
         // Check for deprecation notices.
@@ -67,12 +68,12 @@ class FixturesTest extends \PHPUnit_Framework_TestCase
         foreach ($commands as $command) {
             call_user_func_array(array($this, 'composer'), $command);
         }
-        
+
         // Check for file existance.
         foreach ($files as $file) {
             $this->assertFileExists($file);
         }
-        
+
         unset($workingDirectory);
     }
 
@@ -94,7 +95,7 @@ class FixturesTest extends \PHPUnit_Framework_TestCase
             ),
         );
     }
-    
+
     /**
      * Run composer command.
      *
@@ -134,7 +135,7 @@ class FixturesTest extends \PHPUnit_Framework_TestCase
     protected function assertDeprecationNotice($lines)
     {
         foreach ($lines as $line) {
-            $this->assertNotContains('Deprecation Notice:', $line);
+            $this->assertStringNotContainsString('Deprecation Notice:', $line);
         }
     }
 }

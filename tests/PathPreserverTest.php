@@ -2,27 +2,35 @@
 
 namespace DrupalComposer\PreservePaths\Tests;
 
-use DrupalComposer\PreservePaths\PathPreserver;
+use Composer\IO\IOInterface;
 use Composer\Util\Filesystem;
-use Composer\Package\Package;
-use Composer\Package\RootPackage;
-use Composer\Composer;
-use Composer\Config;
 use derhasi\tempdirectory\TempDirectory;
+use DrupalComposer\PreservePaths\PathPreserver;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test for path preserver functionality.
  */
-class PathPreserverTest extends \PHPUnit_Framework_TestCase
+class PathPreserverTest extends TestCase
 {
+
+    /**
+     * @var \Composer\Util\Filesystem
+     */
+    protected $fs;
+
+    /**
+     * @var \Composer\IO\IOInterface
+     */
+    protected $io;
 
     /**
      * set up test environmemt
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->fs = new Filesystem();
-        $this->io = $this->getMock('Composer\IO\IOInterface');
+        $this->io = $this->getMockBuilder(IOInterface::class)->getMock();
     }
 
     /**
